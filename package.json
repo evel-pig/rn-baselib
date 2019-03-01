@@ -1,15 +1,12 @@
 {
-  "name": "dfxk-rn",
-  "version": "1.0.0",
+  "name": "rn-baselib",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@types/react-navigation": "^3.0.2",
-    "@types/redux-actions": "^2.3.1",
-    "@types/redux-form": "^7.4.12",
     "querystring": "^0.2.0",
     "react-native-gesture-handler": "1.0.12",
     "react-native-linear-gradient": "^2.5.3",
