@@ -109,14 +109,9 @@ class App {
 
   render(node?: React.ReactNode) {
 
-    const AppWithNavigationState = this.createNavigationNode();
-
     return () => (
       <Root store={this._store} persistor={this._persistor}>
-        <View style={{ flex: 1 }}>
-          <AppWithNavigationState />
-          {node}
-        </View>
+        {node}
       </Root>
     );
   }
