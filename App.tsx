@@ -102,9 +102,14 @@ class App {
     };
   }
 
+  createNavigationNode() {
+    const AppWithNavigationState = createNavigationNode(this._navigator);
+    return AppWithNavigationState;
+  }
+
   render(node?: React.ReactNode) {
 
-    const AppWithNavigationState = createNavigationNode(this._navigator);
+    const AppWithNavigationState = this.createNavigationNode();
 
     return () => (
       <Root store={this._store} persistor={this._persistor}>
