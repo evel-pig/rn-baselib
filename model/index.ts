@@ -32,7 +32,7 @@ interface ModelOptions<T, K, P> {
     simple?: ActionKeys<T>;
     api?: ApiConfigs<K>;
   };
-  reducer: (options: ReducerOptions<T, K>) => any;
+  reducer?: (options: ReducerOptions<T, K>) => any;
   sagas?: (options: ActionsAndActionNames<T, K>) => any[];
 }
 
