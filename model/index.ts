@@ -16,8 +16,9 @@ interface ActionNames<T, K> {
 }
 
 interface ReducerOptions<T, K> {
-  actionNames: ActionNames<T, K>;
-  handleActions: typeof handleActions;
+  simpleActionNames: { [key in keyof T]: string };
+  apiActionNames: { [key in keyof K]: ApiActionNames };
+  createReducer: typeof handleActions;
 }
 
 interface ActionsAndActionNames<T, K> {
@@ -27,26 +28,24 @@ interface ActionsAndActionNames<T, K> {
 
 interface ModelOptions<T, K, P> {
   modelName: string;
-  actions?: {
+  action?: {
     simple?: ActionKeys<T>;
     api?: ApiConfigs<K>;
   };
-  reducers?: (options: ReducerOptions<T, K>) => {
-    [key in keyof P]: any;
-  };
+  reducer: (options: ReducerOptions<T, K>) => any;
   sagas?: (options: ActionsAndActionNames<T, K>) => any[];
 }
 
 export interface Model<T, K, P> extends ActionsAndActionNames<T, K> {
-  reducers: {
-    [key in keyof P]: any;
-  };
+  modelName: string;
+  reducer: any;
   sagas: any[];
 }
 
-export function initModel<T, K, P>(options: ModelOptions<T, K, P>): Model<T, K, P> {
+export default function createModel<T, K, P>(options: ModelOptions<T, K, P>): Model<T, K, P> {
 
   const model = {
+    modelName: options.modelName,
     actions: {
       simple: {},
       api: {},
@@ -55,29 +54,30 @@ export function initModel<T, K, P>(options: ModelOptions<T, K, P>): Model<T, K, 
       simple: {},
       api: {},
     },
-    reducers: {},
+    reducer: null,
     sagas: [],
   } as Model<T, K, P>;
 
-  const { modelName, actions = {} } = options;
+  const { modelName, action = {} } = options;
 
-  if (actions.simple && Object.keys(actions.simple).length > 0) {
-    const _actions = initAction(modelName, actions.simple);
+  if (action.simple && Object.keys(action.simple).length > 0) {
+    const _actions = initAction(modelName, action.simple);
     model.actions.simple = _actions.actions;
     model.actionNames.simple = _actions.actionNames;
   }
 
-  if (actions.api && Object.keys(actions.api).length > 0) {
-    const _apis = initApi(modelName, actions.api);
+  if (action.api && Object.keys(action.api).length > 0) {
+    const _apis = initApi(modelName, action.api);
     model.actions.api = _apis.apiActions;
     model.actionNames.api = _apis.apiActionNames;
     model.sagas = model.sagas.concat(_apis.sagas);
   }
 
-  if (options.reducers && typeof options.reducers === 'function') {
-    model.reducers = options.reducers({
-      actionNames: model.actionNames,
-      handleActions: handleActions,
+  if (options.reducer && typeof options.reducer === 'function') {
+    model.reducer = options.reducer({
+      simpleActionNames: model.actionNames.simple,
+      apiActionNames: model.actionNames.api,
+      createReducer: handleActions,
     });
   }
 

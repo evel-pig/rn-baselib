@@ -33,9 +33,8 @@ export function createNavModel(
   };
 
   const nav = {
-    reducers: {
-      nav: navReducer,
-    },
+    modelName: 'nav',
+    reducer: navReducer,
   };
   return nav;
 }

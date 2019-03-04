@@ -82,10 +82,10 @@ class App {
 
     Object.keys(models).forEach(key => {
       const model = models[key];
-      if (model.reducers && typeof model.reducers === 'object') {
+      if (model.reducer && typeof model.reducer === 'function') {
         reducers = {
           ...reducers,
-          ...model.reducers,
+          [model.modelName]: model.reducer,
         };
       }
       if (model.sagas && Array.isArray(model.sagas)) {
