@@ -19,7 +19,7 @@ if (existsSync(themePath)) {
         // 拼接字符串
         let string = `const theme = {\n`;
         Object.keys(finialThemes).forEach(key => {
-          string += ` ${key}: '${finialThemes[key]}',\n`;
+          string += ` '${key}': '${finialThemes[key]}',\n`;
         });
         string += `};\n\nexport default theme;\n`;
         // 写入文件
