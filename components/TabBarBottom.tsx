@@ -30,6 +30,8 @@ interface TabBarProps extends TabBarBottomProps {
   topLineColor?: string;
   /** 选中时的标题颜色, 默认 theme */
   activeTitleColor: string;
+  /** 非选中时的标题颜色, 默认 fontColor */
+  inactiveTitleColor: string;
   /** 整体样式 */
   style?: ViewStyle;
   /** 标题样式 */
@@ -49,6 +51,7 @@ class TabBarBottom extends Component<TabBarProps, TabBarBottomOwnState> {
   static defaultProps = {
     topLineColor: Theme.borderColor,
     activeTitleColor: Theme.theme,
+    inactiveTitleColor: Theme.fontColor,
     height: px2dp(100),
   };
 
@@ -70,7 +73,7 @@ class TabBarBottom extends Component<TabBarProps, TabBarBottomOwnState> {
   }
 
   render() {
-    const { navigation, titleStyle, iconStyle, style, topLineColor, activeTitleColor, height } = this.props;
+    const { navigation, titleStyle, iconStyle, style, topLineColor, activeTitleColor, inactiveTitleColor, height } = this.props;
     const tabRoutes = navigation.state.routes || [];
     const tabs = tabRoutes.map((item, index) => {
       return {
@@ -91,7 +94,7 @@ class TabBarBottom extends Component<TabBarProps, TabBarBottomOwnState> {
             activeOpacity={0.6}
           >
             <Image source={currentIndex === index ? item.activeIcon : item.inActiveIcon} style={[styles.img, iconStyle]} />
-            <Text style={[styles.text, titleStyle, { color: currentIndex === index ? activeTitleColor : Theme.fontColor }]}>{item.name}</Text>
+            <Text style={[styles.text, titleStyle, { color: currentIndex === index ? activeTitleColor : inactiveTitleColor }]}>{item.name}</Text>
           </TouchableOpacity>
         ))}
       </View>
