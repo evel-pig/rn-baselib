@@ -5,3 +5,6 @@ export {
   Input,
   CaptchaInput,
 };
+
+export * from './Input';
+export *  from './CaptchaInput';

@@ -56,6 +56,8 @@ export interface ImageButtonProps {
   upComponent?: ReactNode;
   /** 传入图片底部控件 */
   bottomComponent?: ReactNode;
+  /** 文字行数 */
+  numberOfLines?: number;
 }
 
 const ImageButton = (props: ImageButtonProps) => {
@@ -81,6 +83,7 @@ const ImageButton = (props: ImageButtonProps) => {
     rightComponent,
     upComponent,
     bottomComponent,
+    numberOfLines = 1,
   } = props;
   return (
     <TouchableOpacity
@@ -91,15 +94,15 @@ const ImageButton = (props: ImageButtonProps) => {
       disabled={disabled}
     >
       {upComponent}
-      {textUp ? <Text style={[appStyles.font_30, { marginBottom: px2dp(10) }, textUpStyle]}>{textUp}</Text> : null}
+      {textUp ? <Text style={[appStyles.font_30, { marginBottom: px2dp(10) }, textUpStyle]} numberOfLines={numberOfLines}>{textUp}</Text> : null}
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         {leftComponent}
-        {textLeft ? <Text style={[appStyles.font_30, { marginRight: px2dp(10) }, textLeftStyle]}>{textLeft}</Text> : null}
+        {textLeft ? <Text style={[appStyles.font_30, { marginRight: px2dp(10) }, textLeftStyle]} numberOfLines={numberOfLines}>{textLeft}</Text> : null}
         {source ? <Image source={source} style={imgStyle} /> : null}
-        {textRight ? <Text style={[appStyles.font_30, { marginLeft: px2dp(10) }, textRightStyle]}>{textRight}</Text> : null}
+        {textRight ? <Text style={[appStyles.font_30, { marginLeft: px2dp(10) }, textRightStyle]} numberOfLines={numberOfLines}>{textRight}</Text> : null}
         {rightComponent}
       </View>
-      {textBottom ? <Text style={[appStyles.font_30, { marginTop: px2dp(10) }, textBottomStyle]}>{textBottom}</Text> : null}
+      {textBottom ? <Text style={[appStyles.font_30, { marginTop: px2dp(10) }, textBottomStyle]} numberOfLines={numberOfLines}>{textBottom}</Text> : null}
       {bottomComponent}
       {redPoint ? <View style={[styles.redPoint, redPointStyle]} /> : null}
       {children}

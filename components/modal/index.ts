@@ -5,3 +5,6 @@ export {
   BaseModal,
   ListModal,
 };
+
+export * from './BaseModal';
+export * from './ListModal';
