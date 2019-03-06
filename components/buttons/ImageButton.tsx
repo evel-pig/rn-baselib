@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Theme.white,
+    backgroundColor: 'transparent',
   },
   redPoint: {
     position: 'absolute',

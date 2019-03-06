@@ -1,8 +1,8 @@
-# rn-baselib
+# @epig/rn-baselib
 
 ## 安装
 ```bash
-npm i rn-baselib --save
+npm i @epig/rn-baselib --save
 react-native link
 ```
 
