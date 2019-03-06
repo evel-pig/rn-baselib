@@ -49,7 +49,7 @@ class TabBarBottom extends Component<TabBarProps, TabBarBottomOwnState> {
   static defaultProps = {
     topLineColor: Theme.borderColor,
     activeTitleColor: Theme.theme,
-    height: px2dp(98),
+    height: px2dp(100),
   };
 
   constructor(props) {

@@ -90,7 +90,7 @@ class GridLayout extends Component<GridLayoutProps, GridLayoutOwnState> {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Theme.white,
+    // backgroundColor: Theme.white,
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'flex-start',
