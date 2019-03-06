@@ -94,7 +94,7 @@ class TabBarBottom extends Component<TabBarProps, TabBarBottomOwnState> {
             activeOpacity={0.6}
           >
             <Image source={currentIndex === index ? item.activeIcon : item.inActiveIcon} style={[styles.img, iconStyle]} />
-            <Text style={[styles.text, titleStyle, { color: currentIndex === index ? activeTitleColor : inactiveTitleColor }]}>{item.name}</Text>
+            <Text style={[styles.text, titleStyle, { color: currentIndex === index ? activeTitleColor : inactiveTitleColor }]} numberOfLines={1}>{item.name}</Text>
           </TouchableOpacity>
         ))}
       </View>

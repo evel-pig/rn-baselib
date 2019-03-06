@@ -12,6 +12,7 @@ import CodePushModal from './CodePushModal';
 import Protocol from './Protocol';
 import FormatText from './FormatText';
 import LoadingImage from './LoadingImage';
+import MarqueeHorizontal from './MarqueeHorizontal';
 
 export {
   TabBarBottom,
@@ -28,6 +29,7 @@ export {
   Protocol,
   FormatText,
   LoadingImage,
+  MarqueeHorizontal,
 };
 
 export * from './buttons';
