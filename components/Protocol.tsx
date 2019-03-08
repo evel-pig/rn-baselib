@@ -104,8 +104,7 @@ class Protocol extends Component<ProtocolProps, ProtocolState> {
           style={{ backgroundColor: 'transparent' }}
           onPress={this._onCheck}
         /> : null}
-        <Text style={[appStyles.font_24, styles.hint, hintStyle]} onPress={this._onPressHint}>{hint}</Text>
-        <Text style={[appStyles.font_24, styles.name, { textDecorationLine: isUnderline ? 'underline' : 'none' }, nameStyle]} onPress={onPress}>{name}</Text>
+        <Text style={[appStyles.font_24, styles.hint, hintStyle]} onPress={this._onPressHint} numberOfLines={1}>{hint}<Text style={[appStyles.font_24, styles.name, { textDecorationLine: isUnderline ? 'underline' : 'none' }, nameStyle]} onPress={onPress} numberOfLines={1}>{name}</Text></Text>
         {children}
       </View>
     );
@@ -117,7 +116,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: px2dp(60),
-  },
+    overflow: 'hidden',
+  } as ViewStyle,
   img: {
     width: px2dp(30),
     height: px2dp(30),
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
   name: {
     paddingVertical: px2dp(15),
     color: Theme.theme,
-  },
+  } as TextStyle,
 });
 
 export default Protocol;

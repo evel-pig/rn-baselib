@@ -52,7 +52,7 @@ interface AppOptions {
 class App {
   private _appName: string;
   private _navigator: any;
-  private _store: any;
+  _store: any;
   private _persistor: any;
 
   constructor(opts: AppOptions) {

@@ -18,7 +18,7 @@ import SVGIcon from '../SVGIcon';
 
 export interface TextInputFieldOwnProps extends TextInputProperties {
   /** 输入框格式类型 */
-  type?: 'bankcard' | 'phone' | 'IDCard' | 'noNum' | 'passward';
+  type?: 'bankcard' | 'phone' | 'IDCard' | 'noNum' | 'password';
   /** 左边标题文字 */
   labelText?: string;
   /** 是否显示下划线, 默认true */
@@ -74,6 +74,7 @@ class TextInputField extends Component<TextInputFieldProps, TextInputFieldState>
     selectionColor: Theme.theme,
     clearButtonMode: 'while-editing',
     borderBottomColor: Theme.borderColor,
+    autoCapitalize: 'none',
   };
 
   constructor(props) {
@@ -166,6 +167,7 @@ class TextInputField extends Component<TextInputFieldProps, TextInputFieldState>
       selectionColor,
       clearButtonMode,
       borderBottomColor,
+      autoCapitalize,
       ...rest } = this.props;
     let _keyboardType = keyboardType || 'default';
     let _maxLength = maxLength;
@@ -178,7 +180,7 @@ class TextInputField extends Component<TextInputFieldProps, TextInputFieldState>
       _maxLength = 13;
     } else if (type === 'IDCard') {
       _maxLength = 21;
-    } else if (type === 'passward') {
+    } else if (type === 'password') {
       _maxLength = maxLength || 20;
     }
 
@@ -195,12 +197,13 @@ class TextInputField extends Component<TextInputFieldProps, TextInputFieldState>
           underlineColorAndroid={'transparent'}
           maxLength={_maxLength}
           keyboardType={_keyboardType}
-          secureTextEntry={type === 'passward'}
+          secureTextEntry={type === 'password'}
           placeholder={placeholder}
           placeholderTextColor={placeholderTextColor}
           onChange={(event) => { this._onChange(event.nativeEvent.text); }}
           clearButtonMode={clearButtonMode}
           selectionColor={selectionColor}
+          autoCapitalize={autoCapitalize}
           ref={ref => {
             this.textInput = ref;
             if (getRef) getRef(ref);

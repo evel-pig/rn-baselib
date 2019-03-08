@@ -43,6 +43,8 @@ export interface GradientButtonProps {
   angleCenter?: { x: number, y: number };
   /** 角度 */
   angle?: number;
+  /** 渐变view样式 */
+  LinearGradientStyle?: ViewStyle;
 }
 
 const GradientButton = (props: GradientButtonProps) => {
@@ -63,6 +65,7 @@ const GradientButton = (props: GradientButtonProps) => {
     useAngle = false,
     angleCenter,
     angle = 0,
+    LinearGradientStyle,
   } = props;
 
   return (
@@ -75,7 +78,7 @@ const GradientButton = (props: GradientButtonProps) => {
         useAngle={useAngle}
         angleCenter={angleCenter}
         angle={angle}
-        style={[appStyles.centerFlex, { borderRadius: borderRadius, flex: 1 }]}
+        style={[appStyles.centerFlex, { borderRadius: borderRadius, flex: 1, }, LinearGradientStyle]}
       >
         <Text style={[styles.text, { color: disabled ? titledisableColo : titleColor }, titleStyle]}>{title}</Text>
       </LinearGradient>
