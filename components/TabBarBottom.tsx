@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, ReactNode } from 'react';
 import {
   View,
   Text,
@@ -40,6 +40,8 @@ interface TabBarProps extends TabBarBottomProps {
   iconStyle?: StyleProp<ImageStyle>;
   /** tab高度 */
   height?: number;
+  /** 背景组件 */
+  backgroundComponent?: ReactNode;
 }
 
 interface TabBarBottomOwnState {
@@ -73,7 +75,7 @@ class TabBarBottom extends Component<TabBarProps, TabBarBottomOwnState> {
   }
 
   render() {
-    const { navigation, titleStyle, iconStyle, style, topLineColor, activeTitleColor, inactiveTitleColor, height } = this.props;
+    const { navigation, titleStyle, iconStyle, style, topLineColor, activeTitleColor, inactiveTitleColor, height, backgroundComponent } = this.props;
     const tabRoutes = navigation.state.routes || [];
     const tabs = tabRoutes.map((item, index) => {
       return {
@@ -86,6 +88,7 @@ class TabBarBottom extends Component<TabBarProps, TabBarBottomOwnState> {
 
     return (
       <View style={[styles.tab, style, { borderTopColor: topLineColor }]}>
+        {backgroundComponent}
         {tabs.map((item, index) => (
           <TouchableOpacity
             key={item.routeName}

@@ -137,7 +137,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0.7)',
+    // backgroundColor: 'rgba(0,0,0,0.7)',
+    backgroundColor: 'rgba(255,255,255,1)',
     borderRadius: px2dp(30),
     paddingHorizontal: px2dp(60),
     paddingVertical: px2dp(26),
@@ -148,7 +149,8 @@ const styles = StyleSheet.create({
     fontSize: px2dp(28),
     lineHeight: px2dp(40),
     textAlign: 'center',
-    color: Theme.white,
+    // color: Theme.white,
+    color: Theme.fontColor,
   },
 });
 

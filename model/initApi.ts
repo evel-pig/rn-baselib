@@ -128,6 +128,10 @@ function makeRequest(apiConfig: ApiConfig) {
         ...headers,
       },
     } as any;
+    
+    if (opts.headers.token) {
+      if (typeof (opts.headers.token) !== 'string') opts.headers.token = '';
+    }
 
     // 把动态id从参数中取出来拼接到请求path中;
     if (idKey) {
@@ -151,9 +155,9 @@ function makeRequest(apiConfig: ApiConfig) {
     }
 
     const url = OPTIONS.API_URL + apiPath;
-
+    console.log(opts);
     const res = await xFetch(url, opts, OPTIONS.NET_TIME);
-
+    
     return res;
   };
 }
@@ -219,7 +223,7 @@ function makeEffect(request, actionNames: ApiActionNames, apiConfig: ApiConfig) 
 
         if (__DEV__ && console.group) {
           console.group('%c 网络请求', 'color: blue; font-weight: lighter;');
-          console.log('请求路径：', apiConfig.path);
+          console.log('请求路径：', OPTIONS.API_URL + apiConfig.path);
           console.log('请求参数：', rest);
           console.groupEnd();
         }
@@ -229,7 +233,7 @@ function makeEffect(request, actionNames: ApiActionNames, apiConfig: ApiConfig) 
 
         if (__DEV__ && console.group) {
           console.group('%c 网络请求成功', 'color: blue; font-weight: lighter;');
-          console.log('请求路径：', apiConfig.path);
+          console.log('请求路径：', OPTIONS.API_URL + apiConfig.path);
           console.log('返回数据：', response);
           console.groupEnd();
         }

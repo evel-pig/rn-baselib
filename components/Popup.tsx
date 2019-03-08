@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
   } as ViewStyle,
   alert: {
     overflow: 'hidden',
-    backgroundColor: Theme.backgroundColor,
+    backgroundColor: Theme.white,
     width: px2dp(540),
     borderRadius: px2dp(20),
   } as ViewStyle,
