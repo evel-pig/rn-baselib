@@ -17,8 +17,8 @@ import appStyles, { Theme } from '../../styles';
 import SVGIcon from '../SVGIcon';
 
 export interface TextInputFieldOwnProps extends TextInputProperties {
-  /** 输入框格式类型 */
-  type?: 'bankcard' | 'phone' | 'IDCard' | 'noNum' | 'password';
+  /** 输入框格式类型, noNum: 不能数字, numEn: 只能数字或英文 */
+  type?: 'bankcard' | 'phone' | 'IDCard' | 'noNum' | 'numEn';
   /** 左边标题文字 */
   labelText?: string;
   /** 是否显示下划线, 默认true */
@@ -53,6 +53,10 @@ export interface TextInputFieldOwnProps extends TextInputProperties {
   selectionColor?: string;
   /** 是否要在文本框右侧显示“清除”按钮, 默认为while-editing */
   clearButtonMode?: 'never' | 'while-editing' | 'unless-editing' | 'always';
+  /** 占位符字体型号, 默认 px2dp(30) */
+  placeholderFontsize?: number;
+  /** 字体型号, 默认 px2dp(30) */
+  fontsize?: number;
   [key: string]: any;
 }
 interface TextInputFieldProps extends TextInputFieldOwnProps, WrappedFieldProps {
@@ -75,6 +79,8 @@ class TextInputField extends Component<TextInputFieldProps, TextInputFieldState>
     clearButtonMode: 'while-editing',
     borderBottomColor: Theme.borderColor,
     autoCapitalize: 'none',
+    placeholderFontsize: px2dp(30),
+    fontsize: px2dp(30),
   };
 
   constructor(props) {
@@ -133,6 +139,10 @@ class TextInputField extends Component<TextInputFieldProps, TextInputFieldState>
         text = text.replace(/\d/g, '');
         break;
       }
+      case 'numEn': {
+        text = text.replace(/[^\w\/]/ig, '');
+        break;
+      }
       default:
         break;
     }
@@ -168,6 +178,8 @@ class TextInputField extends Component<TextInputFieldProps, TextInputFieldState>
       clearButtonMode,
       borderBottomColor,
       autoCapitalize,
+      placeholderFontsize,
+      fontsize,
       ...rest } = this.props;
     let _keyboardType = keyboardType || 'default';
     let _maxLength = maxLength;
@@ -180,8 +192,12 @@ class TextInputField extends Component<TextInputFieldProps, TextInputFieldState>
       _maxLength = 13;
     } else if (type === 'IDCard') {
       _maxLength = 21;
-    } else if (type === 'password') {
-      _maxLength = maxLength || 20;
+    }
+
+    const { value = null } = this.state;
+    let tmps = { fontSize: fontsize };
+    if (placeholderFontsize !== fontsize) {
+      tmps = { fontSize: (value === undefined || value === null || value.length <= 0) ? placeholderFontsize : fontsize };
     }
 
     return (
@@ -190,14 +206,13 @@ class TextInputField extends Component<TextInputFieldProps, TextInputFieldState>
         {iconSource ? <Image source={iconSource} style={[styles.img, iconStyle]} /> : null}
         {labelText ? <Text style={[appStyles.font_30, styles.labelText, labelTextStyle]}>{labelText}</Text> : null}
         <TextInput
-          style={[{ flex: 1, textAlign: textAlign }, textInputStyle]}
+          style={[{ flex: 1, paddingVertical: 0, justifyContent: 'center', textAlign: textAlign }, tmps, textInputStyle]}
           onFocus={input.onFocus as () => void}
           onBlur={input.onBlur as () => void}
-          value={this.state.value}
+          value={value}
           underlineColorAndroid={'transparent'}
           maxLength={_maxLength}
           keyboardType={_keyboardType}
-          secureTextEntry={type === 'password'}
           placeholder={placeholder}
           placeholderTextColor={placeholderTextColor}
           onChange={(event) => { this._onChange(event.nativeEvent.text); }}
