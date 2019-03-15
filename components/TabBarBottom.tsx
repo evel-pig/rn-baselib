@@ -42,6 +42,8 @@ interface TabBarProps extends TabBarBottomProps {
   height?: number;
   /** 背景组件 */
   backgroundComponent?: ReactNode;
+  /** tab点击回调函数 */
+  onPress: (index: number, routeName: string, navigation) => void;
 }
 
 interface TabBarBottomOwnState {
@@ -69,9 +71,10 @@ class TabBarBottom extends Component<TabBarProps, TabBarBottomOwnState> {
     });
   }
 
-  _changeIndex = (routeName) => {
+  _changeIndex = (index, routeName) => {
     // this.props.jumpTo(key);
-    this.props.navigation.navigate({ routeName });
+    // this.props.navigation.navigate({ routeName });
+    if (this.props.onPress) this.props.onPress(index, routeName, this.props.navigation);
   }
 
   render() {
@@ -93,7 +96,7 @@ class TabBarBottom extends Component<TabBarProps, TabBarBottomOwnState> {
           <TouchableOpacity
             key={item.routeName}
             style={[styles.item, { height: height }]}
-            onPress={() => { this._changeIndex(item.routeName); }}
+            onPress={() => { this._changeIndex(index, item.routeName); }}
             activeOpacity={0.6}
           >
             <Image source={currentIndex === index ? item.activeIcon : item.inActiveIcon} style={[styles.img, iconStyle]} />

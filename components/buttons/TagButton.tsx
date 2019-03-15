@@ -23,12 +23,10 @@ export interface TagButtonProps {
   borderRadius?: number;
   /** 按钮标题 */
   title: string;
-  /** 不能点击时按钮颜色 */
-  disableColor?: string;
   /** 按钮标题颜色 */
   titleColor?: string;
-  /** 按钮标题不能点击时颜色 */
-  titledisableColo?: string;
+  /** 按钮标题选中时颜色 */
+  titleSelectedColor?: string;
   /** 渐变颜色数组 */
   colors?: (string | number)[];
   /** 开始渐变坐标 */
@@ -45,6 +43,8 @@ export interface TagButtonProps {
   angle?: number;
   /** 是否选中状态 */
   selected?: boolean;
+  /** 选中时按钮背景颜色 */
+  selectedColor?: string;
   /** 未选中状态背景颜色 */
   unSelectedColor?: string;
 }
@@ -53,22 +53,29 @@ const TagButton = (props: TagButtonProps) => {
   const {
     selected = false,
     onPress = () => { },
-    disabled,
     style,
     titleStyle,
-    unSelectedColor = Theme.white,
+    selectedColor,
+    unSelectedColor,
     borderRadius = px2dp(45),
     title = 'tag',
     titleColor = Theme.fontColor,
-    titledisableColo = Theme.fontColor,
+    titleSelectedColor = Theme.fontColor,
     locations = [0, 1],
     start = { x: 0.0, y: 0.0 },
     end = { x: 0.0, y: 1.0 },
-    colors = selected ? [Theme.yellowLight, Theme.yellow] : [unSelectedColor, unSelectedColor],
+    colors = [],
     useAngle = false,
     angleCenter,
     angle = 0,
   } = props;
+
+  let tColors_select = [Theme.yellowLight, Theme.yellow];
+  let tColors_unselect = [Theme.white, Theme.white];
+  if (colors.length === 0) {
+    if (selectedColor) tColors_select = [selectedColor, selectedColor];
+    if (unSelectedColor) tColors_unselect = [unSelectedColor, unSelectedColor];
+  }
 
   return (
     <TouchableOpacity
@@ -76,7 +83,7 @@ const TagButton = (props: TagButtonProps) => {
       activeOpacity={0.6}
     >
       <LinearGradient
-        colors={selected ? colors : [unSelectedColor, unSelectedColor]}
+        colors={colors.length > 0 ? colors : (selected ? tColors_select: tColors_unselect)}
         locations={locations}
         start={start}
         end={end}
@@ -85,7 +92,7 @@ const TagButton = (props: TagButtonProps) => {
         angle={angle}
         style={[appStyles.centerRow, styles.linear, { borderRadius: borderRadius, borderWidth: Theme.borderWidth, borderColor: selected ? 'transparent' : Theme.fontColor_99 }, style]}
       >
-        <Text style={[appStyles.font_30, { color: disabled ? titledisableColo : titleColor }, titleStyle]}>{title}</Text>
+        <Text style={[appStyles.font_30, { color: selected ? titleSelectedColor : titleColor }, titleStyle]}>{title}</Text>
       </LinearGradient>
     </TouchableOpacity>
   );

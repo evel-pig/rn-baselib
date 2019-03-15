@@ -139,7 +139,7 @@ const TextView = ({ onPress, textStyle, text, des, desStyle }) => {
       hitSlop={Theme.hitSlop}
     >
       {text ? <Text style={[appStyles.font_30, textStyle]}>{text}</Text> : null}
-      {des ? <Text style={[appStyles.font_24, { marginTop: px2dp(24) }, desStyle]}>{des}</Text> : null}
+      {des ? <Text style={[appStyles.font_24, desStyle]}>{des}</Text> : null}
     </TouchableOpacity>
   );
 };
