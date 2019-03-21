@@ -131,7 +131,7 @@ class CodePushModal extends Component<CodePushModalProps, CodePushModalState> {
     buttonColor: Theme.theme,
     buttonTextColor: Theme.white,
     alertTitle: '更新提示',
-    alertDes: '有重要内容需要立即更新!',
+    alertDes: '',
     downloadingDes: '极速更新中，请稍等...',
     okBtnText: '立即更新',
     cancelBtnText: '下次再说',
@@ -202,7 +202,7 @@ class CodePushModal extends Component<CodePushModalProps, CodePushModalState> {
     return (
       <View style={[styles.alert, alertStyle]}>
         <Text style={[styles.title, alertTitleStyle]} numberOfLines={1}>{alertTitle}</Text>
-        <Text style={[styles.des, alertDesStyle]}>{alertDes}</Text>
+        <Text style={[styles.des, alertDesStyle]}>{alertDes || '有重要内容需要立即在线更新!'}</Text>
         {
           this.state.immediateUpdate ?
             <View style={styles.downloadContainer}>
