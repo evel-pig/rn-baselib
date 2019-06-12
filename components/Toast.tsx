@@ -101,6 +101,7 @@ class Toast extends Component<ToastProps, ToastState> {
   }
 
   render() {
+    if (!this.state.visible) return <View />;
     const {
       style,
       backgroundStyle,
@@ -116,41 +117,39 @@ class Toast extends Component<ToastProps, ToastState> {
     } = this.showConfig || {};
 
     return (
-      <Modal visible={this.state.visible} animationType={'fade'} transparent onRequestClose={() => { }}>
-        <TouchableOpacity style={[appStyles.centerFlex, styles.bg, backgroundStyle, showBackgroundStyle]} activeOpacity={1} onPress={onPressBackground}>
-          <View style={[styles.toast, style, showStyle]}>
-            <Text style={[styles.text, textStyle, showTextStyle]} numberOfLines={numberOfLines}>{this.state.text}</Text>
-          </View>
-        </TouchableOpacity>
-      </Modal>
+      <TouchableOpacity style={[appStyles.centerFlex, styles.bg, backgroundStyle, showBackgroundStyle]} activeOpacity={1} onPress={onPressBackground}>
+        <View style={[styles.toast, style, showStyle]}>
+          <Text style={[styles.text, textStyle, showTextStyle]} numberOfLines={numberOfLines}>{this.state.text}</Text>
+        </View>
+      </TouchableOpacity>
     );
   }
 }
 
 const styles = StyleSheet.create({
   bg: {
-    backgroundColor: 'transparent',
-    flex: 1,
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
   },
   toast: {
     width: px2dp(600),
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    // backgroundColor: 'rgba(0,0,0,0.7)',
-    backgroundColor: 'rgba(255,255,255,1)',
+    backgroundColor: 'rgba(0,0,0,1)',
     borderRadius: px2dp(30),
     paddingHorizontal: px2dp(60),
     paddingVertical: px2dp(26),
     minHeight: px2dp(80),
-    position: 'relative',
   },
   text: {
     fontSize: px2dp(28),
     lineHeight: px2dp(40),
     textAlign: 'center',
-    // color: Theme.white,
-    color: Theme.fontColor,
+    color: Theme.white,
   },
 });
 

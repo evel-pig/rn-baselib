@@ -72,9 +72,11 @@ class TabBarBottom extends Component<TabBarProps, TabBarBottomOwnState> {
   }
 
   _changeIndex = (index, routeName) => {
-    // this.props.jumpTo(key);
-    // this.props.navigation.navigate({ routeName });
-    if (this.props.onPress) this.props.onPress(index, routeName, this.props.navigation);
+    if (this.props.onPress) {
+      this.props.onPress(index, routeName, this.props.navigation);
+    } else {
+      this.props.navigation.navigate({ routeName });
+    }
   }
 
   render() {

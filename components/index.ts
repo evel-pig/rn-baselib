@@ -13,6 +13,7 @@ import Protocol from './Protocol';
 import FormatText from './FormatText';
 import LoadingImage from './LoadingImage';
 import MarqueeHorizontal from './MarqueeHorizontal';
+import Tooltip from './Tooltip';
 
 export {
   TabBarBottom,
@@ -30,6 +31,7 @@ export {
   FormatText,
   LoadingImage,
   MarqueeHorizontal,
+  Tooltip,
 };
 
 export * from './buttons';
@@ -55,3 +57,4 @@ export * from './Protocol';
 export * from './FormatText';
 export * from './LoadingImage';
 export * from './MarqueeHorizontal';
+export * from './Tooltip';

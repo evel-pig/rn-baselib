@@ -223,25 +223,22 @@ class CodePushModal extends Component<CodePushModalProps, CodePushModalState> {
 
   render() {
     const { style, modalVisible } = this.props;
+    if (!modalVisible) return <View />;
     return (
-      <Modal
-        animationType={'fade'}
-        transparent
-        visible={modalVisible}
-        onRequestClose={() => { }}
-      >
-        <View style={[appStyles.centerFlex, styles.modal, style]}>
-          {this._renderAlert()}
-        </View>
-      </Modal>
+      <View style={[styles.modal, style]}>
+        {this._renderAlert()}
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
   modal: {
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingHorizontal: globalPadding,
     backgroundColor: 'rgba(0,0,0,0.3)',
+    position: 'absolute', left: 0, right: 0, top: 0, bottom: 0,
   },
   alert: {
     paddingHorizontal: globalPadding,

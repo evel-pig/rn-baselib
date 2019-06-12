@@ -1,6 +1,5 @@
 import React, { Component, ReactNode } from 'react';
 import {
-  Modal,
   View,
   Text,
   StyleSheet,
@@ -211,23 +210,22 @@ class Popup extends Component<PopupProps, PopupState> {
   }
 
   render() {
+    if (!this.state.visible) return <View />;
     const {
       bgStyle,
       style,
       contentViewStyle,
     } = this.state;
     return (
-      <Modal animationType={'fade'} visible={this.state.visible} onRequestClose={() => { }} transparent>
-        <View style={[appStyles.centerFlex, styles.container, bgStyle]}>
-          <View style={[styles.alert, style]}>
-            <View style={[appStyles.borderBottom, appStyles.center, { padding: px2dp(30) }, contentViewStyle]}>
-              {this._renderTitle()}
-              {this._renderContent()}
-            </View>
-            {this._renderButtons()}
+      <View style={[styles.container, bgStyle]}>
+        <View style={[styles.alert, style]}>
+          <View style={[appStyles.borderBottom, appStyles.center, { padding: px2dp(30) }, contentViewStyle]}>
+            {this._renderTitle()}
+            {this._renderContent()}
           </View>
+          {this._renderButtons()}
         </View>
-      </Modal >
+      </View>
     );
   }
 }
@@ -246,6 +244,13 @@ const ButtonView = ({ onPress, title = '', style, textStyle }) => {
 
 const styles = StyleSheet.create({
   container: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
   } as ViewStyle,
   alert: {
