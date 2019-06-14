@@ -30,3 +30,16 @@ react-native link
 #### 自定义主题颜色
 1. 要自定义默认的主题颜色值(在`./styles/theme.ts`), 可以在项目根目录下新建一个`theme.json`文件, 在此文件内添加对应的颜色值; 如果`key`与`./styles/theme.ts`内的`key`相同则会覆盖, 如果没有相同的`key`, 则会新增颜色值.
 2. 在项目根目录下执行: `node node_modules/@epig/rn-baselib/styles/custom.cli.js`
+
+## 权限管理
+### iOS
+用到某个权限需在 `info.plist` 添加如下对应项
+- 读取相册: `Privacy - Photo Library Usage Description`  
+- 保存图片至相册: `Privacy - Photo Library Additions Usage Description`
+- 相机: `Privacy - Camera Usage Description`
+- 定位:
+    + `Privacy - Location When In Use Usage Description`
+    + `Privacy - Location Usage Description`
+    + `Privacy - Location Always Usage Description`
+    + `Privacy - Location Always and When In Use Usage Description`
+- 联系人: `Privacy - Contacts Usage Description`
