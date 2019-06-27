@@ -15,6 +15,8 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.content.PermissionChecker;
 import android.util.Log;
 
+import com.reactlibrary.RNBaselibModule;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -32,8 +34,7 @@ import static android.os.Build.VERSION_CODES.KITKAT;
  */
 
 public final class PermissionUtils {
-//    private static final List<String> PERMISSIONS = getPermissions();
-    private static List<String> PERMISSIONS = new ArrayList();
+    private static final List<String> PERMISSIONS = getPermissions();
     private static PermissionUtils sInstance;
     private OnRationaleListener mOnRationaleListener;
     private SimpleCallback      mSimpleCallback;
@@ -48,25 +49,18 @@ public final class PermissionUtils {
     private static final String CHECK_OP_NO_THROW = "checkOpNoThrow";
     private static final String OP_POST_NOTIFICATION = "OP_POST_NOTIFICATION";
 
-    private static Context mContext;
-
-    public static void setMainContext(Context context) {
-        mContext = context;
-        PERMISSIONS = getPermissions();
-    }
-
     /**
      * 获取本app的所有permissions
      */
     public static List<String> getPermissions() {
-        return getPermissionsWithApp(mContext.getPackageName());
+        return getPermissionsWithApp(RNBaselibModule.appContext.getPackageName());
     }
 
     /**
      * 获取输入包名app的所有permissions
      */
     private static List<String> getPermissionsWithApp(final String packageName) {
-        PackageManager pm = mContext.getPackageManager();
+        PackageManager pm = RNBaselibModule.appContext.getPackageManager();
         try {
             return Arrays.asList(pm.getPackageInfo(packageName, PackageManager.GET_PERMISSIONS).requestedPermissions);
         } catch (PackageManager.NameNotFoundException e) {
@@ -93,18 +87,18 @@ public final class PermissionUtils {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             int targetSdkVersionMy = 0;
             try {
-                final PackageInfo info = mContext.getPackageManager().getPackageInfo(
-                        mContext.getPackageName(), 0);
+                final PackageInfo info = RNBaselibModule.appContext.getPackageManager().getPackageInfo(
+                        RNBaselibModule.appContext.getPackageName(), 0);
                 targetSdkVersionMy = info.applicationInfo.targetSdkVersion;
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
             }
 
             if (targetSdkVersionMy >= Build.VERSION_CODES.M) {
-                result = mContext.checkSelfPermission(permission)
+                result = RNBaselibModule.appContext.checkSelfPermission(permission)
                         == PackageManager.PERMISSION_GRANTED;
             } else {
-                result = PermissionChecker.checkSelfPermission(mContext, permission)
+                result = PermissionChecker.checkSelfPermission(RNBaselibModule.appContext, permission)
                         == PermissionChecker.PERMISSION_GRANTED;
             }
         }
@@ -192,7 +186,7 @@ public final class PermissionUtils {
     private void startPermissionActivity() {
         mPermissionsDenied = new ArrayList<>();
         mPermissionsDeniedForever = new ArrayList<>();
-        PermissionActivity.start(mContext);
+        PermissionActivity.start(RNBaselibModule.appContext);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)

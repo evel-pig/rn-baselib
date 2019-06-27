@@ -11,6 +11,11 @@
 		6208A66922B34DA000F8CD7F /* ContactsHelp.m in Sources */ = {isa = PBXBuildFile; fileRef = 6208A66522B34DA000F8CD7F /* ContactsHelp.m */; };
 		6208A66A22B34DA000F8CD7F /* LocationHelp.m in Sources */ = {isa = PBXBuildFile; fileRef = 6208A66722B34DA000F8CD7F /* LocationHelp.m */; };
 		6208A66E22B34DC100F8CD7F /* NSString+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 6208A66D22B34DC100F8CD7F /* NSString+Extension.m */; };
+		62E1327F22B8860E004C474C /* AppStoreHelp.m in Sources */ = {isa = PBXBuildFile; fileRef = 62E1327E22B8860E004C474C /* AppStoreHelp.m */; };
+		62E1329622BA2035004C474C /* UUIDHelp.m in Sources */ = {isa = PBXBuildFile; fileRef = 62E1329522BA2035004C474C /* UUIDHelp.m */; };
+		62E1329922BA213C004C474C /* StorageHelp.m in Sources */ = {isa = PBXBuildFile; fileRef = 62E1329822BA213C004C474C /* StorageHelp.m */; };
+		62E1329C22BA36D7004C474C /* IdfaHelp.m in Sources */ = {isa = PBXBuildFile; fileRef = 62E1329B22BA36D7004C474C /* IdfaHelp.m */; };
+		62E132B322BA3D1D004C474C /* NetInfoHelp.m in Sources */ = {isa = PBXBuildFile; fileRef = 62E132B122BA3BAA004C474C /* NetInfoHelp.m */; };
 		B3E7B58A1CC2AC0600A0062D /* RNBaselib.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* RNBaselib.m */; };
 /* End PBXBuildFile section */
 
@@ -36,6 +41,16 @@
 		6208A66722B34DA000F8CD7F /* LocationHelp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationHelp.m; sourceTree = "<group>"; };
 		6208A66C22B34DC100F8CD7F /* NSString+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Extension.h"; sourceTree = "<group>"; };
 		6208A66D22B34DC100F8CD7F /* NSString+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Extension.m"; sourceTree = "<group>"; };
+		62E1327D22B8860E004C474C /* AppStoreHelp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppStoreHelp.h; sourceTree = "<group>"; };
+		62E1327E22B8860E004C474C /* AppStoreHelp.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppStoreHelp.m; sourceTree = "<group>"; };
+		62E1329422BA2035004C474C /* UUIDHelp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UUIDHelp.h; sourceTree = "<group>"; };
+		62E1329522BA2035004C474C /* UUIDHelp.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UUIDHelp.m; sourceTree = "<group>"; };
+		62E1329722BA213C004C474C /* StorageHelp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StorageHelp.h; sourceTree = "<group>"; };
+		62E1329822BA213C004C474C /* StorageHelp.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StorageHelp.m; sourceTree = "<group>"; };
+		62E1329A22BA36D7004C474C /* IdfaHelp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IdfaHelp.h; sourceTree = "<group>"; };
+		62E1329B22BA36D7004C474C /* IdfaHelp.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IdfaHelp.m; sourceTree = "<group>"; };
+		62E132B022BA3BAA004C474C /* NetInfoHelp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetInfoHelp.h; sourceTree = "<group>"; };
+		62E132B122BA3BAA004C474C /* NetInfoHelp.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NetInfoHelp.m; sourceTree = "<group>"; };
 		B3E7B5881CC2AC0600A0062D /* RNBaselib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNBaselib.h; sourceTree = "<group>"; };
 		B3E7B5891CC2AC0600A0062D /* RNBaselib.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNBaselib.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -62,6 +77,7 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
+				62E1329322BA2008004C474C /* deviceinfo */,
 				6208A66B22B34DC100F8CD7F /* utils */,
 				6208A66122B34DA000F8CD7F /* Permissions */,
 				B3E7B5881CC2AC0600A0062D /* RNBaselib.h */,
@@ -88,8 +104,25 @@
 			children = (
 				6208A66C22B34DC100F8CD7F /* NSString+Extension.h */,
 				6208A66D22B34DC100F8CD7F /* NSString+Extension.m */,
+				62E1327D22B8860E004C474C /* AppStoreHelp.h */,
+				62E1327E22B8860E004C474C /* AppStoreHelp.m */,
+				62E1329722BA213C004C474C /* StorageHelp.h */,
+				62E1329822BA213C004C474C /* StorageHelp.m */,
 			);
 			path = utils;
+			sourceTree = "<group>";
+		};
+		62E1329322BA2008004C474C /* deviceinfo */ = {
+			isa = PBXGroup;
+			children = (
+				62E1329422BA2035004C474C /* UUIDHelp.h */,
+				62E1329522BA2035004C474C /* UUIDHelp.m */,
+				62E1329A22BA36D7004C474C /* IdfaHelp.h */,
+				62E1329B22BA36D7004C474C /* IdfaHelp.m */,
+				62E132B022BA3BAA004C474C /* NetInfoHelp.h */,
+				62E132B122BA3BAA004C474C /* NetInfoHelp.m */,
+			);
+			path = deviceinfo;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -148,10 +181,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				62E1329622BA2035004C474C /* UUIDHelp.m in Sources */,
+				62E1327F22B8860E004C474C /* AppStoreHelp.m in Sources */,
 				6208A66E22B34DC100F8CD7F /* NSString+Extension.m in Sources */,
 				B3E7B58A1CC2AC0600A0062D /* RNBaselib.m in Sources */,
+				62E132B322BA3D1D004C474C /* NetInfoHelp.m in Sources */,
 				6208A66822B34DA000F8CD7F /* NotificationHelp.m in Sources */,
+				62E1329C22BA36D7004C474C /* IdfaHelp.m in Sources */,
 				6208A66922B34DA000F8CD7F /* ContactsHelp.m in Sources */,
+				62E1329922BA213C004C474C /* StorageHelp.m in Sources */,
 				6208A66A22B34DA000F8CD7F /* LocationHelp.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

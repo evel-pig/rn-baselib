@@ -42,4 +42,23 @@ react-native link
     + `Privacy - Location Usage Description`
     + `Privacy - Location Always Usage Description`
     + `Privacy - Location Always and When In Use Usage Description`
-- 联系人: `Privacy - Contacts Usage Description`
+- 通讯录: `Privacy - Contacts Usage Description`
+
+### Android
+用到某个权限需在 `AndroidManifest.xml` 添加如下对应项
+- 读取相册: `<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>`
+- 存入相册: `<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>`
+- 相机: `<uses-permission android:name="android.permission.CAMERA"/>`
+- 定位:
+    + `<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>`
+    + `<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>`
+    + `<uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"/>`
+- 读取通讯录: `<uses-permission android:name="android.permission.READ_CONTACTS"/>`
+- 编辑通讯录: `<uses-permission android:name="android.permission.WRITE_CONTACTS"/>`
+- 读取短信: `<uses-permission android:name="android.permission.READ_SMS"/>`
+- 编辑短信: `<uses-permission android:name="android.permission.WRITE_SMS"/>`
+- 接收短信: `<uses-permission android:name="android.permission.RECEIVE_SMS"/>`
+- 发送短信: `<uses-permission android:name="android.permission.SEND_SMS"/>`
+- 读取通话记录: `<uses-permission android:name="android.permission.READ_CALL_LOG"/>`
+- 编辑通话记录: `<uses-permission android:name="android.permission.WRITE_CALL_LOG"/>`
+- 获取ip, wifi的mac地址: `<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>`

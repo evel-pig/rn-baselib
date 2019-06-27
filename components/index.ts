@@ -58,3 +58,4 @@ export * from './FormatText';
 export * from './LoadingImage';
 export * from './MarqueeHorizontal';
 export * from './Tooltip';
+export * from './base';
