@@ -1,5 +1,12 @@
 import { ToastAndroid, Keyboard, Platform, BackHandler } from 'react-native';
 import { StackActions, NavigationActions } from 'react-navigation';
+import { NavTransitionType } from './NavTransitionHelp';
+
+export interface NavigationParams {
+  /** 页面切换效果 */
+  transtionType?: NavTransitionType;
+  [key: string]: any;
+}
 
 export class Navigation {
   static store: {
@@ -25,11 +32,11 @@ export class Navigation {
   /**
    * 路由堆栈:push(等同于this.props.navigation.navigate)
    * @param {string} routeName
-   * @param {*} [params]
+   * @param {NavigationParams} [params]
    * @returns
    * @memberof Navigation
    */
-  push = (routeName: string, params?: any) => {
+  push = (routeName: string, params?: NavigationParams) => {
     const { dispatch } = Navigation.store;
     if (typeof routeName === 'string') {
       if (this._pushing) {
@@ -93,10 +100,10 @@ export class Navigation {
   /**
    * 路由堆栈：替换当前路由
    * @param {string} routeName
-   * @param {*} [params]
+   * @param {NavigationParams} [params]
    * @memberof Navigation
    */
-  replace = (routeName: string, params?: any) => {
+  replace = (routeName: string, params?: NavigationParams) => {
     const { dispatch } = Navigation.store;
     dispatch(StackActions.replace({
       routeName,
@@ -107,11 +114,11 @@ export class Navigation {
   /**
    * 路由堆栈：重置路由
    * @param {string} [routeName='index']
-   * @param {*} [params]
+   * @param {NavigationParams} [params]
    * @returns
    * @memberof Navigation
    */
-  reset = (routeName: string = 'index', params?: any) => {
+  reset = (routeName: string = 'index', params?: NavigationParams) => {
     const { dispatch, getState } = Navigation.store;
     if (routeName === getState().nav.routeName) return;
 

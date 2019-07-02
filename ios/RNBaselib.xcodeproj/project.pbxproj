@@ -11,11 +11,11 @@
 		6208A66922B34DA000F8CD7F /* ContactsHelp.m in Sources */ = {isa = PBXBuildFile; fileRef = 6208A66522B34DA000F8CD7F /* ContactsHelp.m */; };
 		6208A66A22B34DA000F8CD7F /* LocationHelp.m in Sources */ = {isa = PBXBuildFile; fileRef = 6208A66722B34DA000F8CD7F /* LocationHelp.m */; };
 		6208A66E22B34DC100F8CD7F /* NSString+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 6208A66D22B34DC100F8CD7F /* NSString+Extension.m */; };
-		62E1327F22B8860E004C474C /* AppStoreHelp.m in Sources */ = {isa = PBXBuildFile; fileRef = 62E1327E22B8860E004C474C /* AppStoreHelp.m */; };
-		62E1329622BA2035004C474C /* UUIDHelp.m in Sources */ = {isa = PBXBuildFile; fileRef = 62E1329522BA2035004C474C /* UUIDHelp.m */; };
+		62717C5222C5AFC60075916D /* AppStoreHelp.m in Sources */ = {isa = PBXBuildFile; fileRef = 62E1327E22B8860E004C474C /* AppStoreHelp.m */; };
+		62717C5322C5AFCA0075916D /* IdfaHelp.m in Sources */ = {isa = PBXBuildFile; fileRef = 62E1329B22BA36D7004C474C /* IdfaHelp.m */; };
+		62717C5422C5AFCF0075916D /* NetInfoHelp.m in Sources */ = {isa = PBXBuildFile; fileRef = 62E132B122BA3BAA004C474C /* NetInfoHelp.m */; };
+		62717C5522C5AFD30075916D /* UUIDHelp.m in Sources */ = {isa = PBXBuildFile; fileRef = 62E1329522BA2035004C474C /* UUIDHelp.m */; };
 		62E1329922BA213C004C474C /* StorageHelp.m in Sources */ = {isa = PBXBuildFile; fileRef = 62E1329822BA213C004C474C /* StorageHelp.m */; };
-		62E1329C22BA36D7004C474C /* IdfaHelp.m in Sources */ = {isa = PBXBuildFile; fileRef = 62E1329B22BA36D7004C474C /* IdfaHelp.m */; };
-		62E132B322BA3D1D004C474C /* NetInfoHelp.m in Sources */ = {isa = PBXBuildFile; fileRef = 62E132B122BA3BAA004C474C /* NetInfoHelp.m */; };
 		B3E7B58A1CC2AC0600A0062D /* RNBaselib.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* RNBaselib.m */; };
 /* End PBXBuildFile section */
 
@@ -181,13 +181,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				62E1329622BA2035004C474C /* UUIDHelp.m in Sources */,
-				62E1327F22B8860E004C474C /* AppStoreHelp.m in Sources */,
+				62717C5522C5AFD30075916D /* UUIDHelp.m in Sources */,
+				62717C5422C5AFCF0075916D /* NetInfoHelp.m in Sources */,
+				62717C5322C5AFCA0075916D /* IdfaHelp.m in Sources */,
+				62717C5222C5AFC60075916D /* AppStoreHelp.m in Sources */,
 				6208A66E22B34DC100F8CD7F /* NSString+Extension.m in Sources */,
 				B3E7B58A1CC2AC0600A0062D /* RNBaselib.m in Sources */,
-				62E132B322BA3D1D004C474C /* NetInfoHelp.m in Sources */,
 				6208A66822B34DA000F8CD7F /* NotificationHelp.m in Sources */,
-				62E1329C22BA36D7004C474C /* IdfaHelp.m in Sources */,
 				6208A66922B34DA000F8CD7F /* ContactsHelp.m in Sources */,
 				62E1329922BA213C004C474C /* StorageHelp.m in Sources */,
 				6208A66A22B34DA000F8CD7F /* LocationHelp.m in Sources */,
