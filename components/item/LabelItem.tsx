@@ -115,13 +115,11 @@ export default class LabelItem extends Component<LabelItemProps, any> {
         disabled={disabled}
       >
         {beforeTextLeftComponent}
-        <TextView onPress={onPressLeft || this._onPress} textStyle={textLeftStyle} text={textLeft} des={textLeftDes} desStyle={textLeftDesStyle} />
+        {textLeft ? <TextView onPress={onPressLeft || this._onPress} textStyle={textLeftStyle} text={textLeft} des={textLeftDes} desStyle={textLeftDesStyle} /> : null}
         {afterTextLeftComponent}
-        <View style={appStyles.centerFlex} >
-          {centerComponent}
-        </View>
+        <View style={appStyles.centerFlex} >{centerComponent}</View>
         {beforeTextRightComponent}
-        <TextView onPress={onPressRight || this._onPress} textStyle={textRightStyle} text={textRight} des={textRightDes} desStyle={textRightDesStyle} />
+        {textRight ? <TextView onPress={onPressRight || this._onPress} textStyle={textRightStyle} text={textRight} des={textRightDes} desStyle={textRightDesStyle} /> : null}
         {afterTextRightComponent}
         {showArrow ? <Image source={arrowRight} style={styles.arrow} /> : null}
         {border ? <HorizontalLine style={borderStyle} /> : null}

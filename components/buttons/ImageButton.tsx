@@ -21,7 +21,7 @@ export interface ImageButtonProps {
   /** 图片资源 */
   source?: ImageSourcePropType;
   /** 图片样式 */
-  imgStyle: StyleProp<ImageStyle>;
+  imgStyle?: StyleProp<ImageStyle>;
   /** 整体样式 */
   style?: StyleProp<ViewStyle>;
   /** 是否不能点击 */
