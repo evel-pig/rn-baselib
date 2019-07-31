@@ -9,6 +9,8 @@ import {
   ViewStyle,
   DeviceEventEmitter,
   EmitterSubscription,
+  Animated,
+  Easing,
 } from 'react-native';
 import appStyles, { Theme } from '../styles';
 
@@ -56,18 +58,23 @@ export interface PopupProps {
   defaultOkBtnTextStyle?: StyleProp<TextStyle>;
   /** 左边按钮文字默认样式 */
   defaultCancelBtnTextStyle?: StyleProp<TextStyle>;
+  /** 渐变显示小时时长, 默认250 */
+  fadeAnimTime?: number;
 }
 
 interface PopupState extends PopupProps {
   visible: boolean;
+  fadeAnim?: any;
   [key: string]: any;
 }
 
 class Popup extends Component<PopupProps, PopupState> {
   showEmitter: EmitterSubscription;
+  scaleAnim: any = new Animated.Value(1);
 
   static defaultProps = {
     keepShow: false,
+    fadeAnimTime: 250,
   };
 
   static show(popupConfig: PopupProps = {}) {
@@ -94,13 +101,16 @@ class Popup extends Component<PopupProps, PopupState> {
       defaultCancelBtnStyle: null,
       defaultOkBtnTextStyle: null,
       defaultCancelBtnTextStyle: null,
+      fadeAnim: new Animated.Value(0),
       ...props,
     };
   }
 
   componentDidMount() {
     this.showEmitter = DeviceEventEmitter.addListener('POPUP_SHOW', (data: PopupProps = {}) => {
-      this.setState({ ...data, visible: true });
+      this.setState({ ...data, visible: true }, () => {
+        this._showAnimat();
+      });
     });
   }
 
@@ -108,27 +118,60 @@ class Popup extends Component<PopupProps, PopupState> {
     if (this.showEmitter) this.showEmitter.remove();
   }
 
+  _showAnimat = () => {
+    this.scaleAnim.setValue(0.9);
+    Animated.parallel([
+      Animated.timing(
+        this.state.fadeAnim, {
+          toValue: 1,
+          easing: Easing.linear,
+          duration: this.props.fadeAnimTime,
+        },
+      ),
+      Animated.spring(
+        this.scaleAnim, {
+          toValue: 1,
+          friction: 4,
+          tension: 30,
+        },
+      ),
+    ]).start();
+  }
+
+  _hideAnimat = () => {
+    Animated.timing(
+      this.state.fadeAnim, {
+        toValue: 0,
+        easing: Easing.linear,
+        duration: this.props.fadeAnimTime,
+      },
+    ).start();
+  }
+
   _close = () => {
-    this.setState({
-      visible: false,
-      title: null,
-      titleViewStyle: null,
-      titleStyle: null,
-      content: null,
-      contentViewStyle: null,
-      contentStyle: null,
-      childView: null,
-      okBtn: null,
-      cancelBtn: null,
-      keepShow: null,
-      style: null,
-      bgStyle: null,
-      defaultOkBtnStyle: null,
-      defaultCancelBtnStyle: null,
-      defaultOkBtnTextStyle: null,
-      defaultCancelBtnTextStyle: null,
-      ...this.props,
-    });
+    this._hideAnimat();
+    setTimeout(() => {
+      this.setState({
+        visible: false,
+        title: null,
+        titleViewStyle: null,
+        titleStyle: null,
+        content: null,
+        contentViewStyle: null,
+        contentStyle: null,
+        childView: null,
+        okBtn: null,
+        cancelBtn: null,
+        keepShow: null,
+        style: null,
+        bgStyle: null,
+        defaultOkBtnStyle: null,
+        defaultCancelBtnStyle: null,
+        defaultOkBtnTextStyle: null,
+        defaultCancelBtnTextStyle: null,
+        ...this.props,
+      });
+    }, this.props.fadeAnimTime + 50);
   }
 
   _okOnPress = () => {
@@ -217,15 +260,15 @@ class Popup extends Component<PopupProps, PopupState> {
       contentViewStyle,
     } = this.state;
     return (
-      <View style={[styles.container, bgStyle]}>
-        <View style={[styles.alert, style]}>
+      <Animated.View style={[styles.container, { opacity: this.state.fadeAnim }, bgStyle]}>
+        <Animated.View style={[styles.alert, { transform: [{ scale: this.scaleAnim }] }, style]}>
           <View style={[appStyles.borderBottom, appStyles.center, { padding: px2dp(30) }, contentViewStyle]}>
             {this._renderTitle()}
             {this._renderContent()}
           </View>
           {this._renderButtons()}
-        </View>
-      </View>
+        </Animated.View>
+      </Animated.View>
     );
   }
 }
@@ -251,7 +294,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.2)',
   } as ViewStyle,
   alert: {
     overflow: 'hidden',

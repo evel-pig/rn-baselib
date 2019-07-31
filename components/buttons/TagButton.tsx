@@ -92,7 +92,7 @@ const TagButton = (props: TagButtonProps) => {
         angle={angle}
         style={[appStyles.centerRow, styles.linear, { borderRadius: borderRadius, borderWidth: Theme.borderWidth, borderColor: selected ? 'transparent' : Theme.fontColor_99 }, style]}
       >
-        <Text style={[appStyles.font_30, { color: selected ? titleSelectedColor : titleColor }, titleStyle]}>{title}</Text>
+        <Text style={[appStyles.font_30, { color: selected ? titleSelectedColor : titleColor }, titleStyle]} numberOfLines={1}>{title}</Text>
       </LinearGradient>
     </TouchableOpacity>
   );

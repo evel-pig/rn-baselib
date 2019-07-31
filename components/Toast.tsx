@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {
-  Modal,
   View,
   Text,
   StyleSheet,
@@ -10,13 +9,15 @@ import {
   DeviceEventEmitter,
   EmitterSubscription,
   StyleProp,
+  Animated,
+  Easing,
 } from 'react-native';
 import appStyles, { Theme } from '../styles';
 
 export interface ToastConfig {
   /* 提示文案 */
   des: string;
-  /* 显示时长(默认3s) */
+  /* 显示时长(默认2000毫秒) */
   time?: number;
   /** toast消失后的回调 */
   callback?: () => void;
@@ -29,7 +30,7 @@ export interface ToastConfig {
 }
 
 export interface ToastProps {
-  /** 显示时长, 默认2500毫秒 */
+  /** 显示时长, 默认2000毫秒 */
   showTime?: number;
   /** 文字最多行数, 默认4行 */
   numberOfLines?: number;
@@ -41,21 +42,26 @@ export interface ToastProps {
   backgroundStyle?: StyleProp<ViewStyle>;
   /** 展示的文字样式 */
   textStyle?: StyleProp<TextStyle>;
+  /** 渐变显示小时时长, 默认250 */
+  fadeAnimTime?: number;
 }
 
 interface ToastState {
   visible: boolean;
   text: string;
+  fadeAnim: any;
 }
 
 class Toast extends Component<ToastProps, ToastState> {
   emitter: EmitterSubscription;
   timer: number;
   showConfig: ToastConfig;
+  scaleAnim: any = new Animated.Value(1);
 
   static defaultProps = {
-    showTime: 2500,
+    showTime: 2000,
     numberOfLines: 4,
+    fadeAnimTime: 250,
   };
 
   /**
@@ -74,6 +80,7 @@ class Toast extends Component<ToastProps, ToastState> {
     this.state = {
       visible: false,
       text: '',
+      fadeAnim: new Animated.Value(0),
     };
   }
 
@@ -87,17 +94,51 @@ class Toast extends Component<ToastProps, ToastState> {
     });
   }
 
-  show = (time = this.props.showTime, callback = () => { }) => {
-    if (this.timer) clearTimeout(this.timer);
-    this.timer = setTimeout(() => {
-      this.setState({ visible: false, text: '' }, callback);
-      this.showConfig = null;
-    }, time);
-  }
-
   componentWillUnmount() {
     if (this.emitter) this.emitter.remove();
     if (this.timer) clearTimeout(this.timer);
+  }
+
+  show = (time = this.props.showTime, callback = () => { }) => {
+    this._showAnimat();
+    if (this.timer) clearTimeout(this.timer);
+    this.timer = setTimeout(() => {
+      this._hideAnimat();
+      setTimeout(() => {
+        this.setState({ visible: false, text: '' }, callback);
+        this.showConfig = null;
+      }, this.props.fadeAnimTime + 50);
+    }, time);
+  }
+
+  _showAnimat = () => {
+    this.scaleAnim.setValue(0.8);
+    Animated.parallel([
+      Animated.timing(
+        this.state.fadeAnim, {
+          toValue: 1,
+          easing: Easing.linear,
+          duration: this.props.fadeAnimTime,
+        },
+      ),
+      Animated.spring(
+        this.scaleAnim, {
+          toValue: 1,
+          friction: 3,
+          tension: 30,
+        },
+      ),
+    ]).start();
+  }
+
+  _hideAnimat = () => {
+    Animated.timing(
+      this.state.fadeAnim, {
+        toValue: 0,
+        easing: Easing.linear,
+        duration: this.props.fadeAnimTime,
+      },
+    ).start();
   }
 
   render() {
@@ -117,10 +158,10 @@ class Toast extends Component<ToastProps, ToastState> {
     } = this.showConfig || {};
 
     return (
-      <TouchableOpacity style={[appStyles.centerFlex, styles.bg, backgroundStyle, showBackgroundStyle]} activeOpacity={1} onPress={onPressBackground}>
-        <View style={[styles.toast, style, showStyle]}>
+      <TouchableOpacity style={[styles.bg, backgroundStyle, showBackgroundStyle]} activeOpacity={1} onPress={onPressBackground}>
+        <Animated.View style={[styles.toast, { opacity: this.state.fadeAnim, transform: [{ scale: this.scaleAnim }] }, style, showStyle] as StyleProp<ViewStyle>}>
           <Text style={[styles.text, textStyle, showTextStyle]} numberOfLines={numberOfLines}>{this.state.text}</Text>
-        </View>
+        </Animated.View>
       </TouchableOpacity>
     );
   }
@@ -133,7 +174,8 @@ const styles = StyleSheet.create({
     top: 0,
     right: 0,
     bottom: 0,
-  },
+    alignItems: 'center',
+  } as ViewStyle,
   toast: {
     width: px2dp(600),
     alignSelf: 'center',
@@ -144,13 +186,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: px2dp(60),
     paddingVertical: px2dp(26),
     minHeight: px2dp(80),
-  },
+    marginTop: Theme.DeviceHeight * 0.25,
+  } as ViewStyle,
   text: {
     fontSize: px2dp(28),
     lineHeight: px2dp(40),
     textAlign: 'center',
     color: Theme.white,
-  },
+  } as TextStyle,
 });
 
 export default Toast;

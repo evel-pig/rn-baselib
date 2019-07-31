@@ -63,6 +63,8 @@ export interface LabelItemProps {
   afterTextRightComponent?: ReactNode;
   /** 传入中间的控件 */
   centerComponent?: ReactNode;
+  /** 中间控件样式 */
+  centerStyle?: StyleProp<ViewStyle>;
 }
 
 export default class LabelItem extends Component<LabelItemProps, any> {
@@ -104,6 +106,7 @@ export default class LabelItem extends Component<LabelItemProps, any> {
       textRightDesStyle,
       textLeftDesStyle,
       centerComponent,
+      centerStyle,
     } = this.props;
 
     return (
@@ -117,7 +120,7 @@ export default class LabelItem extends Component<LabelItemProps, any> {
         {beforeTextLeftComponent}
         {textLeft ? <TextView onPress={onPressLeft || this._onPress} textStyle={textLeftStyle} text={textLeft} des={textLeftDes} desStyle={textLeftDesStyle} /> : null}
         {afterTextLeftComponent}
-        <View style={appStyles.centerFlex} >{centerComponent}</View>
+        <View style={[appStyles.centerFlex, centerStyle]} >{centerComponent}</View>
         {beforeTextRightComponent}
         {textRight ? <TextView onPress={onPressRight || this._onPress} textStyle={textRightStyle} text={textRight} des={textRightDes} desStyle={textRightDesStyle} /> : null}
         {afterTextRightComponent}

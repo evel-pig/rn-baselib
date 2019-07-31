@@ -10,6 +10,10 @@ import {
   ViewStyle,
   ImageSourcePropType,
   StyleProp,
+  DeviceEventEmitter,
+  EmitterSubscription,
+  Animated,
+  Easing,
 } from 'react-native';
 import { TabBarBottomProps } from 'react-navigation';
 import { Theme } from '../styles';
@@ -47,10 +51,19 @@ interface TabBarProps extends TabBarBottomProps {
 }
 
 interface TabBarBottomOwnState {
+  visible: boolean;
+  scaleAnim: any;
 }
+
+const showNoti = 'TABBARBOTTOM_SHOW';
+const hideNoti = 'TABBARBOTTOM_HIDE';
+const H = px2dp(100) + Theme.iPhoneXBottom;
 
 class TabBarBottom extends Component<TabBarProps, TabBarBottomOwnState> {
   tabConfigs: any[] = new Array();
+  showEmitter: EmitterSubscription;
+  hideEmitter: EmitterSubscription;
+  hideAnim: any = new Animated.Value(0);
 
   static defaultProps = {
     topLineColor: Theme.borderColor,
@@ -58,6 +71,20 @@ class TabBarBottom extends Component<TabBarProps, TabBarBottomOwnState> {
     inactiveTitleColor: Theme.fontColor,
     height: px2dp(100),
   };
+
+  /**
+   * show TabBar
+   */
+  static show() {
+    DeviceEventEmitter.emit(showNoti);
+  }
+
+  /**
+   * hide TabBar
+   */
+  static hide() {
+    DeviceEventEmitter.emit(hideNoti);
+  }
 
   constructor(props) {
     super(props);
@@ -69,9 +96,63 @@ class TabBarBottom extends Component<TabBarProps, TabBarBottomOwnState> {
         inActiveIcon: item.iconInActive || null,
       });
     });
+
+    this.state = {
+      visible: true,
+      scaleAnim: new Animated.Value(1),
+    };
+  }
+
+  componentDidMount() {
+    this.showEmitter = DeviceEventEmitter.addListener(showNoti, () => {
+      if (!this.state.visible) {
+        this.setState({ visible: true }, () => {
+          this._hideAnima(0);
+        });
+      }
+    });
+    this.hideEmitter = DeviceEventEmitter.addListener(hideNoti, () => {
+      if (this.state.visible) {
+        this.setState({ visible: false }, () => {
+          this._hideAnima(-H);
+        });
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    if (this.showEmitter) this.showEmitter.remove();
+    if (this.hideEmitter) this.hideEmitter.remove();
+  }
+
+  _hideAnima = (height) => {
+    Animated.timing(
+      this.hideAnim, {
+        toValue: height,
+        duration: 200,
+        easing: Easing.ease,
+      },
+    ).start();
+  }
+
+  _bounceAnima = () => {
+    this.setState({ scaleAnim: new Animated.Value(0.9) }, () => {
+      Animated.spring(
+        this.state.scaleAnim, {
+          toValue: 1,
+          useNativeDriver: true,
+          bounciness: 5,
+          speed: 5,
+        },
+      ).start(() => {
+        this.setState({ scaleAnim: new Animated.Value(1) });
+      });
+    });
   }
 
   _changeIndex = (index, routeName) => {
+    this._bounceAnima();
+
     if (this.props.onPress) {
       this.props.onPress(index, routeName, this.props.navigation);
     } else {
@@ -90,22 +171,24 @@ class TabBarBottom extends Component<TabBarProps, TabBarBottomOwnState> {
     });
 
     const currentIndex = navigation.state.index || 0;
-
     return (
-      <View style={[styles.tab, style, { borderTopColor: topLineColor }]}>
+      <Animated.View style={[styles.tab, style, { borderTopColor: topLineColor, bottom: this.hideAnim }]}>
         {backgroundComponent}
-        {tabs.map((item, index) => (
-          <TouchableOpacity
-            key={item.routeName}
-            style={[styles.item, { height: height }]}
-            onPress={() => { this._changeIndex(index, item.routeName); }}
-            activeOpacity={0.6}
-          >
-            <Image source={currentIndex === index ? item.activeIcon : item.inActiveIcon} style={[styles.img, iconStyle]} />
-            <Text style={[styles.text, titleStyle, { color: currentIndex === index ? activeTitleColor : inactiveTitleColor }]} numberOfLines={1}>{item.name}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+        {tabs.map((item, index) => {
+          let isSelected = currentIndex === index;
+          return (
+            <TouchableOpacity
+              key={item.routeName}
+              style={[styles.item, { height: height }]}
+              onPress={() => { this._changeIndex(index, item.routeName); }}
+              activeOpacity={0.8}
+            >
+              <Animated.Image source={isSelected ? item.activeIcon : item.inActiveIcon} style={[styles.img, { transform: [{ scale: isSelected ? this.state.scaleAnim : 1 }] }, iconStyle]} />
+              <Text style={[styles.text, titleStyle, { color: isSelected ? activeTitleColor : inactiveTitleColor }]} numberOfLines={1}>{item.name}</Text>
+            </TouchableOpacity>
+          );
+        })}
+      </Animated.View>
     );
   }
 }
@@ -113,13 +196,14 @@ class TabBarBottom extends Component<TabBarProps, TabBarBottomOwnState> {
 const styles = StyleSheet.create({
   tab: {
     position: 'absolute',
-    bottom: 0,
-    alignItems: 'center',
+    left: 0,
+    right: 0,
+    height: H,
+    alignItems: 'flex-start',
     flexDirection: 'row',
     backgroundColor: Theme.white,
-    paddingBottom: Theme.iPhoneXBottom,
     borderTopWidth: Theme.borderWidth,
-  },
+  } as ViewStyle,
   item: {
     flex: 1,
     alignItems: 'center',
