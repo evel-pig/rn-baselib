@@ -3,6 +3,8 @@ import { call, put, take, select } from 'redux-saga/effects';
 import { DeviceEventEmitter } from 'react-native';
 import querystring from 'querystring';
 import xFetch from './xFetch';
+import Toast from '../components/Toast';
+import Loading from '../components/Loading';
 
 declare const console: any;
 
@@ -11,6 +13,8 @@ export interface ApiConfig {
   path: string;
   /** 请求方式, 默认 POST */
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  /** 是否隐藏loading */
+  hideLoading?: boolean;
 }
 
 export type ApiConfigs<T> = {
@@ -43,21 +47,25 @@ export interface ApiModelOptions {
   API_URL: string;
   /** Response 字段以及状态码*/
   RESPONSE?: {
-    /** 状态码字段 */
     STATUS_NAME: string;
-    /** 文字描述字段 */
     DES_NAME: string;
-    /** 成功状态码 */
     SUCCESS_CODE: number[];
+    LOGOUT_CODE: number[];
   };
   /** 全局请求Header */
   HEADERS?: {
-    /** 请求Header是否要带token */
     token?: boolean;
     [key: string]: any;
   };
   /** 请求超时时间(ms) */
   NET_TIME?: number;
+  /** 配置TOAST选项 */
+  TOAST?: (opts: { des: string }) => void;
+  /** 配置LOADING选项 */
+  LOADING?: {
+    SHOW: () => void;
+    HIDE: () => void;
+  };
 }
 
 let OPTIONS: Partial<ApiModelOptions> = {
@@ -66,6 +74,7 @@ let OPTIONS: Partial<ApiModelOptions> = {
     STATUS_NAME: 'status',
     DES_NAME: 'des',
     SUCCESS_CODE: [0],
+    LOGOUT_CODE: [-103],
   },
 };
 
@@ -76,7 +85,13 @@ export function setApiOptions(options: ApiModelOptions) {
   };
 }
 
+export const FetchEventNames = {
+  logout: 'fetch/logout',
+};
+
 const DYNAMIC_API_REG = new RegExp(/:\w+/);
+
+let LOADING_INDEX = 0;
 
 /**
  * 创建API Action的名字
@@ -149,11 +164,35 @@ function makeRequest(apiConfig: ApiConfig) {
     }
 
     const url = OPTIONS.API_URL + apiPath;
-    console.log('请求路径：', url);
     console.log(opts);
     const res = await xFetch(url, opts, OPTIONS.NET_TIME);
+
     return res;
   };
+}
+
+function handleLoadingShow() {
+  if (OPTIONS.LOADING && typeof OPTIONS.LOADING.SHOW === 'function') {
+    OPTIONS.LOADING.SHOW();
+  } else {
+    Loading.show();
+  }
+}
+
+function handleLoadingHide() {
+  if (OPTIONS.LOADING && typeof OPTIONS.LOADING.HIDE === 'function') {
+    OPTIONS.LOADING.HIDE();
+  } else {
+    Loading.hide();
+  }
+}
+
+function handleToast(message: string) {
+  if (OPTIONS.TOAST && typeof OPTIONS.TOAST === 'function') {
+    OPTIONS.TOAST({ des: message });
+  } else {
+    Toast.show({ des: message });
+  }
 }
 
 /**
@@ -167,9 +206,16 @@ function makeEffect(request, actionNames: ApiActionNames, apiConfig: ApiConfig) 
     while (true) {
       const requestAction = yield take(actionNames.request);
       const payload = requestAction.payload || {};
-      const { except = {}, ...rest } = payload;
+      const { hideLoading, except = {}, ...rest } = payload;
 
       const { RESPONSE, HEADERS } = OPTIONS;
+
+      // 控制loading显示
+      if (LOADING_INDEX === 0 && !apiConfig.hideLoading && !hideLoading) {
+        handleLoadingShow();
+      }
+
+      LOADING_INDEX++;
 
       try {
         // 判断是否添加token到headers中;
@@ -186,7 +232,7 @@ function makeEffect(request, actionNames: ApiActionNames, apiConfig: ApiConfig) 
 
         if (__DEV__ && console.group) {
           console.group('%c 网络请求', 'color: blue; font-weight: lighter;');
-          console.log('api：', OPTIONS.API_URL + apiConfig.path);
+          console.log('请求路径：', OPTIONS.API_URL + apiConfig.path);
           console.log('请求参数：', rest);
           console.groupEnd();
         }
@@ -196,7 +242,7 @@ function makeEffect(request, actionNames: ApiActionNames, apiConfig: ApiConfig) 
 
         if (__DEV__ && console.group) {
           console.group('%c 网络请求成功', 'color: blue; font-weight: lighter;');
-          console.log('api', apiConfig.path);
+          console.log('请求路径：', OPTIONS.API_URL + apiConfig.path);
           console.log('返回数据：', response);
           console.groupEnd();
         }
@@ -209,6 +255,10 @@ function makeEffect(request, actionNames: ApiActionNames, apiConfig: ApiConfig) 
             res: response,
           }));
           DeviceEventEmitter.emit(actionNames.success, { req: requestAction.payload, res: response });
+        } else if (RESPONSE.LOGOUT_CODE.includes(response[RESPONSE.STATUS_NAME])) {
+          // 强制登出
+          yield put(createAction(FetchEventNames.logout)({ status: response[RESPONSE.STATUS_NAME] }));
+          DeviceEventEmitter.emit(FetchEventNames.logout, { status: response[RESPONSE.STATUS_NAME] });
         } else {
           // 发起错误Action
           yield put(createAction<any>(actionNames.error)({
@@ -216,6 +266,10 @@ function makeEffect(request, actionNames: ApiActionNames, apiConfig: ApiConfig) 
             res: response,
           }));
           DeviceEventEmitter.emit(actionNames.error, { req: requestAction.payload, res: response });
+
+          if (response[OPTIONS.RESPONSE.DES_NAME]) {
+            handleToast(response[OPTIONS.RESPONSE.DES_NAME]);
+          }
         }
       } catch (error) {
 
@@ -226,12 +280,31 @@ function makeEffect(request, actionNames: ApiActionNames, apiConfig: ApiConfig) 
           console.groupEnd();
         }
 
+        // 失败处理
+        let errorMessage = '未知错误';
+        if (error[OPTIONS.RESPONSE.DES_NAME]) {
+          errorMessage = error[OPTIONS.RESPONSE.DES_NAME];
+        } else if (error.des) {
+          errorMessage = error.des;
+        } else if (typeof error === 'string') {
+          errorMessage = error;
+        }
+
         // 发起失败 Aciton
         yield put(createAction<any>(actionNames.fail)({
           req: requestAction.payload || null,
-          res: error,
+          res: { des: errorMessage },
         }));
-        DeviceEventEmitter.emit(actionNames.fail, { req: requestAction.payload, res: error });
+        DeviceEventEmitter.emit(actionNames.fail, { req: requestAction.payload, res: { des: errorMessage } });
+
+        // 错误提示
+        handleToast(errorMessage);
+      }
+
+      // 控制loading消失
+      LOADING_INDEX--;
+      if (LOADING_INDEX === 0 && !apiConfig.hideLoading && !hideLoading) {
+        handleLoadingHide();
       }
     }
   };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppRegistry, UIManager, View } from 'react-native';
+import { AppRegistry, UIManager } from 'react-native';
 import { combineReducers } from 'redux';
 import { connect } from 'react-redux';
 import { reducer as form } from 'redux-form';
@@ -7,7 +7,8 @@ import { NavigationContainer } from 'react-navigation';
 import { reduxifyNavigator } from 'react-navigation-redux-helpers';
 import Root from './src/Root';
 import configureStore, { runSaga } from './src/store';
-import { setApiOptions, ApiModelOptions, Model } from './model';
+import { Model } from './model';
+import { ApiModelOptions, setApiOptions } from '@epig/rn-baselib/model/initApi';
 
 UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
 
@@ -31,7 +32,7 @@ export function createNavigationNode(AppNavigator) {
 }
 
 interface Models {
-  [key: string]: Partial<Model<any, any, any>>;
+  [key: string]: Partial<Model<any, any>>;
 }
 
 interface AppOptions {
@@ -40,7 +41,7 @@ interface AppOptions {
   /** navigator */
   navigator: NavigationContainer;
   /** reduces */
-  model?: Models;
+  model: Models;
   /** api options */
   apiOptions: ApiModelOptions;
   /** 持久化白名单 */
@@ -72,7 +73,6 @@ class App {
     this._persistor = persistor;
 
     runSaga(sagas);
-
     setApiOptions(opts.apiOptions);
   }
 

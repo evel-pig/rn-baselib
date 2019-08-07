@@ -1,90 +1,69 @@
-import { handleActions, ActionFunctionAny, Action } from 'redux-actions';
-import { initAction, ActionKeys } from './initAction';
-import { initApi, ApiActionNames, ApiConfigs } from './initApi';
-
-export { initAction } from './initAction';
-export { initApi, setApiOptions, ApiModelOptions } from './initApi';
-
-interface Actions<T, K> {
-  simple: { [key in keyof T]: ActionFunctionAny<Action<any>> };
-  api: { [key in keyof K]: ActionFunctionAny<Action<any>> };
-}
-
-interface ActionNames<T, K> {
-  simple: { [key in keyof T]: string };
-  api: { [key in keyof K]: ApiActionNames };
-}
+import { handleActions } from 'redux-actions';
+import { initNode, HelpKeys, HelpNode } from './initHelpNode';
+import { initApi, ApiConfigs, NodeConfig } from './initApi';
 
 interface ReducerOptions<T, K> {
-  simpleActionNames: { [key in keyof T]: string };
-  apiActionNames: { [key in keyof K]: ApiActionNames };
   createReducer: typeof handleActions;
+  apiNode: NodeConfig<T>;
+  helpNode: HelpNode<K>;
 }
 
-interface ActionsAndActionNames<T, K> {
-  actions: Actions<T, K>;
-  actionNames: ActionNames<T, K>;
+interface SagaOptions<T, K> {
+  apiNode: NodeConfig<T>;
+  helpNode: HelpNode<K>;
 }
 
-interface ModelOptions<T, K, P> {
+interface ModelOptions<T, K> {
   modelName: string;
-  action?: {
-    simple?: ActionKeys<T>;
-    api?: ApiConfigs<K>;
-  };
+  help?: HelpKeys<K>;
+  api?: ApiConfigs<T>;
   reducer?: (options: ReducerOptions<T, K>) => any;
-  sagas?: (options: ActionsAndActionNames<T, K>) => any[];
+  sagas?: (options: SagaOptions<T, K>) => any[];
 }
 
-export interface Model<T, K, P> extends ActionsAndActionNames<T, K> {
+export interface Model<T, K> {
   modelName: string;
+  help?: HelpNode<K>;
+  api?: NodeConfig<T>;
   reducer: any;
   sagas: any[];
 }
 
-export default function createModel<T, K, P>(options: ModelOptions<T, K, P>): Model<T, K, P> {
+export default function createModel<T, K>(options: ModelOptions<T, K>): Model<T, K> {
 
   const model = {
     modelName: options.modelName,
-    actions: {
-      simple: {},
-      api: {},
-    },
-    actionNames: {
-      simple: {},
-      api: {},
-    },
+    help: {},
+    api: {},
     reducer: null,
     sagas: [],
-  } as Model<T, K, P>;
+  } as Model<T, K>;
 
-  const { modelName, action = {} } = options;
+  const { modelName, help = {} as HelpKeys<K>, api = {} as ApiConfigs<T> } = options;
 
-  if (action.simple && Object.keys(action.simple).length > 0) {
-    const _actions = initAction(modelName, action.simple);
-    model.actions.simple = _actions.actions;
-    model.actionNames.simple = _actions.actionNames;
+  if (help && Object.keys(help).length > 0) {
+    const _helpNodes = initNode(modelName, help);
+    model.help = _helpNodes;
   }
 
-  if (action.api && Object.keys(action.api).length > 0) {
-    const _apis = initApi(modelName, action.api);
-    model.actions.api = _apis.apiActions;
-    model.actionNames.api = _apis.apiActionNames;
+  if (api && Object.keys(api).length > 0) {
+    const _apis = initApi<T>(modelName, api);
+    model.api = _apis.node;
     model.sagas = model.sagas.concat(_apis.sagas);
   }
 
   if (options.reducer && typeof options.reducer === 'function') {
     model.reducer = options.reducer({
-      simpleActionNames: model.actionNames.simple,
-      apiActionNames: model.actionNames.api,
+      apiNode: model.api,
+      helpNode: model.help,
       createReducer: handleActions,
     });
   }
 
   if (options.sagas && typeof options.sagas === 'function') {
     model.sagas = model.sagas.concat(options.sagas({
-      actionNames: model.actionNames,
-      actions: model.actions,
+      apiNode: model.api,
+      helpNode: model.help,
     }));
   }
 
