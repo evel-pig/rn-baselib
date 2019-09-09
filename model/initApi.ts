@@ -103,15 +103,6 @@ function makeRequest(apiConfig: ApiConfig) {
     // 请求方式
     let method = apiConfig.method.toUpperCase();
 
-    // 请求路径
-    let apiPath = apiConfig.path;
-
-    // 请求url动态id的名称
-    let idKey;
-    if (apiPath.match(DYNAMIC_API_REG)) {
-      idKey = apiPath.match(DYNAMIC_API_REG)[0].slice(1);
-    }
-
     // fetch请求的options
     let opts = {
       method: method,
@@ -127,14 +118,36 @@ function makeRequest(apiConfig: ApiConfig) {
       if (typeof (opts.headers.token) !== 'string') opts.headers.token = '';
     }
 
-    // 把动态id从参数中取出来拼接到请求path中;
-    if (idKey) {
-      let pathId = data[idKey];
-      if (pathId !== null && pathId !== undefined) {
-        apiPath = apiPath.replace(DYNAMIC_API_REG, pathId);
-        delete data[idKey]; // 把对应的id取出来拼接到了url,删除原始数据中的id;
-      } else {
-        console.error(`请检查传递参数是否缺少${idKey}`);
+    // 请求路径
+    let apiPath = apiConfig.path;
+    // 请求url动态id的名称
+    let idKey;
+
+    // if (apiPath.match(DYNAMIC_API_REG)) {
+    //   idKey = apiPath.match(DYNAMIC_API_REG)[0].slice(1);
+    // }
+    // // 把动态id从参数中取出来拼接到请求path中;
+    // if (idKey) {
+    //   let pathId = data[idKey];
+    //   if (pathId !== null && pathId !== undefined) {
+    //     apiPath = apiPath.replace(DYNAMIC_API_REG, pathId);
+    //     delete data[idKey]; // 把对应的id取出来拼接到了url,删除原始数据中的id;
+    //   } else {
+    //     console.error(`请检查传递参数是否缺少${idKey}`);
+    //   }
+    // }
+
+    while (apiPath.match(DYNAMIC_API_REG)) {
+      idKey = apiPath.match(DYNAMIC_API_REG)[0].slice(1);
+      if (idKey) {
+        let pathId = data[idKey];
+        if (pathId !== null && pathId !== undefined) {
+          apiPath = apiPath.replace(DYNAMIC_API_REG, pathId);
+          delete data[idKey]; // 把对应的id取出来拼接到了url,删除原始数据中的id;
+        } else {
+          console.error(`请检查传递参数是否缺少${idKey}`);
+          break;
+        }
       }
     }
 
@@ -186,7 +199,7 @@ function makeEffect(request, actionNames: ApiActionNames, apiConfig: ApiConfig) 
 
         if (__DEV__ && console.group) {
           console.group('%c 网络请求', 'color: blue; font-weight: lighter;');
-          console.log('api：', OPTIONS.API_URL + apiConfig.path);
+          // console.log('api：', OPTIONS.API_URL + apiConfig.path);
           console.log('请求参数：', rest);
           console.groupEnd();
         }

@@ -54,6 +54,7 @@ export interface RefreshFlatListtProps extends FlatListProperties<any> {
   footerNoMoreDataComponent?: React.ReactNode;
   /** 空数据控件 */
   footerEmptyDataComponent?: React.ReactNode;
+  [key: string]: any;
 }
 
 interface RefreshFlatListOwnState {

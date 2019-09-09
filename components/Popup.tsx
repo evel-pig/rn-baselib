@@ -176,18 +176,18 @@ class Popup extends Component<PopupProps, PopupState> {
 
   _okOnPress = () => {
     const { okBtn, keepShow } = this.state;
+    if (!keepShow) this._close();
     if (okBtn && okBtn.onPress && okBtn.onPress instanceof Function) {
       okBtn.onPress();
     }
-    if (!keepShow) this._close();
   }
 
   _cancelOnPress = () => {
     const { cancelBtn, keepShow } = this.state;
+    if (!keepShow) this._close();
     if (cancelBtn && cancelBtn.onPress && cancelBtn.onPress instanceof Function) {
       cancelBtn.onPress();
     }
-    if (!keepShow) this._close();
   }
 
   _renderTitle = () => {
@@ -262,7 +262,7 @@ class Popup extends Component<PopupProps, PopupState> {
     return (
       <Animated.View style={[styles.container, { opacity: this.state.fadeAnim }, bgStyle]}>
         <Animated.View style={[styles.alert, { transform: [{ scale: this.scaleAnim }] }, style]}>
-          <View style={[appStyles.borderBottom, appStyles.center, { padding: px2dp(30) }, contentViewStyle]}>
+          <View style={[appStyles.borderBottom, appStyles.center, styles.topView, contentViewStyle]}>
             {this._renderTitle()}
             {this._renderContent()}
           </View>
@@ -301,6 +301,10 @@ const styles = StyleSheet.create({
     backgroundColor: Theme.white,
     width: px2dp(540),
     borderRadius: px2dp(20),
+  } as ViewStyle,
+  topView: {
+    padding: px2dp(30),
+    minHeight: px2dp(150),
   } as ViewStyle,
   title: {
     textAlign: 'center',
