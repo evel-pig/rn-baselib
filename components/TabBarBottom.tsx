@@ -1,8 +1,6 @@
 import React, { Component, ReactNode } from 'react';
 import {
-  View,
   Text,
-  Image,
   TouchableOpacity,
   StyleSheet,
   TextStyle,
@@ -13,10 +11,10 @@ import {
   DeviceEventEmitter,
   EmitterSubscription,
   Animated,
-  Easing,
 } from 'react-native';
 import { TabBarBottomProps } from 'react-navigation';
 import { Theme } from '../styles';
+import * as Animatable from 'react-native-animatable';
 
 interface TabBarResourcesProps {
   /** 标题 */
@@ -52,7 +50,6 @@ interface TabBarProps extends TabBarBottomProps {
 
 interface TabBarBottomOwnState {
   visible: boolean;
-  scaleAnim: any;
 }
 
 const showNoti = 'TABBARBOTTOM_SHOW';
@@ -63,7 +60,8 @@ class TabBarBottom extends Component<TabBarProps, TabBarBottomOwnState> {
   tabConfigs: any[] = new Array();
   showEmitter: EmitterSubscription;
   hideEmitter: EmitterSubscription;
-  hideAnim: any = new Animated.Value(0);
+  itemImgs: any[];
+  view: Animatable.View;
 
   static defaultProps = {
     topLineColor: Theme.borderColor,
@@ -99,23 +97,20 @@ class TabBarBottom extends Component<TabBarProps, TabBarBottomOwnState> {
 
     this.state = {
       visible: true,
-      scaleAnim: new Animated.Value(1),
     };
+
+    this.itemImgs = new Array(props.resources.length).fill('');
   }
 
   componentDidMount() {
     this.showEmitter = DeviceEventEmitter.addListener(showNoti, () => {
       if (!this.state.visible) {
-        this.setState({ visible: true }, () => {
-          this._hideAnima(0);
-        });
+        this.setState({ visible: true }, this._barAnima);
       }
     });
     this.hideEmitter = DeviceEventEmitter.addListener(hideNoti, () => {
       if (this.state.visible) {
-        this.setState({ visible: false }, () => {
-          this._hideAnima(-H);
-        });
+        this.setState({ visible: false }, this._barAnima);
       }
     });
   }
@@ -125,33 +120,16 @@ class TabBarBottom extends Component<TabBarProps, TabBarBottomOwnState> {
     if (this.hideEmitter) this.hideEmitter.remove();
   }
 
-  _hideAnima = (height) => {
-    Animated.timing(
-      this.hideAnim, {
-        toValue: height,
-        duration: 200,
-        easing: Easing.ease,
-      },
-    ).start();
-  }
-
-  _bounceAnima = () => {
-    this.setState({ scaleAnim: new Animated.Value(0.9) }, () => {
-      Animated.spring(
-        this.state.scaleAnim, {
-          toValue: 1,
-          useNativeDriver: true,
-          bounciness: 5,
-          speed: 5,
-        },
-      ).start(() => {
-        this.setState({ scaleAnim: new Animated.Value(1) });
-      });
-    });
+  _barAnima = () => {
+    if (this.view) {
+      this.view[this.state.visible ? 'slideInUp' : 'slideOutDown']();
+    }
   }
 
   _changeIndex = (index, routeName) => {
-    this._bounceAnima();
+    if (this.itemImgs[index]) {
+      this.itemImgs[index]['swing']();
+    }
 
     if (this.props.onPress) {
       this.props.onPress(index, routeName, this.props.navigation);
@@ -172,7 +150,7 @@ class TabBarBottom extends Component<TabBarProps, TabBarBottomOwnState> {
 
     const currentIndex = navigation.state.index || 0;
     return (
-      <Animated.View style={[styles.tab, style, { borderTopColor: topLineColor, bottom: this.hideAnim }]}>
+      <Animatable.View ref={r => this.view = r} duration={300} easing={'ease-in-out'} style={[styles.tab, style, { borderTopColor: topLineColor }]}>
         {backgroundComponent}
         {tabs.map((item, index) => {
           let isSelected = currentIndex === index;
@@ -183,12 +161,18 @@ class TabBarBottom extends Component<TabBarProps, TabBarBottomOwnState> {
               onPress={() => { this._changeIndex(index, item.routeName); }}
               activeOpacity={0.8}
             >
-              <Animated.Image source={isSelected ? item.activeIcon : item.inActiveIcon} style={[styles.img, { transform: [{ scale: isSelected ? this.state.scaleAnim : 1 }] }, iconStyle]} />
+              <Animatable.Image
+                ref={r => this.itemImgs[index] = r}
+                duration={500}
+                easing={'ease-in'}
+                source={isSelected ? item.activeIcon : item.inActiveIcon}
+                style={[styles.img, iconStyle]}
+              />
               <Text style={[styles.text, titleStyle, { color: isSelected ? activeTitleColor : inactiveTitleColor }]} numberOfLines={1}>{item.name}</Text>
             </TouchableOpacity>
           );
         })}
-      </Animated.View>
+      </Animatable.View>
     );
   }
 }
@@ -198,6 +182,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
+    bottom: 0,
     height: H,
     alignItems: 'flex-start',
     flexDirection: 'row',

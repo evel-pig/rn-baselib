@@ -5,10 +5,10 @@ import { createLogger } from 'redux-logger';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { createReactNavigationReduxMiddleware } from 'react-navigation-redux-helpers';
-import { composeWithDevTools } from 'remote-redux-devtools';
+
+declare const global: any;
 
 const sagaMiddleware = createSagaMiddleware();
-
 const navMiddleware = createReactNavigationReduxMiddleware(
   'root',
   (state: any) => state.nav,
@@ -47,18 +47,21 @@ function configureStore(opts: Options) {
     navMiddleware,
   ].concat(middlewares);
 
-  let _enhancer;
-
   if (__DEV__) {
     _middlewares.push(createLogger());
-    const composeEnhancers = composeWithDevTools({ realtime: true, hostname: 'localhost', port: 8005 });
-    _enhancer = composeEnhancers(applyMiddleware(..._middlewares));
   } else {
-    _enhancer = compose(applyMiddleware(..._middlewares));
+    global.console = {
+      info: () => { },
+      log: () => { },
+      warn: () => { },
+      error: () => { },
+      group: () => { },
+      groupEnd: () => { },
+    };
   }
 
+  const _enhancer = compose(applyMiddleware(..._middlewares));
   const store = createStore(_persistedReducer, _enhancer);
-
   const persistor = persistStore(store);
 
   return {

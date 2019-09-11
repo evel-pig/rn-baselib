@@ -12,19 +12,6 @@ import { ApiModelOptions, setApiOptions } from '@epig/rn-baselib/model/initApi';
 
 UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
 
-declare const global: any;
-
-if (!__DEV__) {
-  global.console = {
-    info: () => { },
-    log: () => { },
-    warn: () => { },
-    error: () => { },
-    group: () => { },
-    groupEnd: () => { },
-  };
-}
-
 export function createNavigationNode(AppNavigator) {
   const App: any = reduxifyNavigator(AppNavigator, 'root');
   const NavNode = connect((state: any) => ({ state: state.nav }))(App);

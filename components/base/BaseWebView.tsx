@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 
 export interface BaseWebViewProps extends WebViewProperties {
+  getRef?: any;
 }
 
 // react-native自带的webview在安卓上不能拍照片和选择照片.
@@ -15,6 +16,7 @@ class BaseWebView extends PureComponent<BaseWebViewProps, any> {
   render() {
     return (
       <WebView
+        ref={this.props.getRef}
         dataDetectorTypes={'link'}
         startInLoadingState
         {...Platform.select({

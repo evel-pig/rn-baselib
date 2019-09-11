@@ -3,8 +3,6 @@ import {
   Modal,
   StyleSheet,
   TouchableOpacity,
-  Animated,
-  Easing,
   ViewStyle,
   StyleProp,
   TextStyle,
@@ -14,6 +12,7 @@ import {
 import appStyle, { Theme } from '../../styles';
 import ImageButton from '../buttons/ImageButton';
 import iconClose from '../assets/icons/close.png';
+import * as Animatable from 'react-native-animatable';
 
 export interface BaseModalProps {
   /** 显示后回调 */
@@ -52,8 +51,8 @@ interface BaseModalState {
 
 class BaseModal extends Component<BaseModalProps, BaseModalState> {
   timer: any;
-  contentH: any = new Animated.Value(0);
-  durationTime: number = 250;
+  durationTime: number = 500;
+  contentView = Animatable.View;
 
   static defaultProps = {
     modalHeight: px2dp(800),
@@ -76,34 +75,22 @@ class BaseModal extends Component<BaseModalProps, BaseModalState> {
 
   show = () => {
     if (!this.state.visible) {
-      this.setState({ visible: true });
-      this.timer = setTimeout(() => {
-        this._createAnimation(this.props.modalHeight).start(() => {
-          if (this.props.onShowed) this.props.onShowed();
-        });
-      }, this.durationTime);
+      this.setState({ visible: true }, () => {
+        if (this.contentView) this.contentView.fadeInUpBig();
+        if (this.props.onShowed) this.props.onShowed();
+      });
     }
   }
 
   close = () => {
     if (this.state.visible) {
-      this.contentH.setValue(0);
-      this._createAnimation(0).start();
+      if (this.contentView) this.contentView.fadeOutDownBig().then(() => {
+        if (this.props.onClosed) this.props.onClosed();
+      });
       this.timer = setTimeout(() => {
         this.setState({ visible: false });
-        if (this.props.onClosed) this.props.onClosed();
-      }, 0);
+      }, this.durationTime * 0.5);
     }
-  }
-
-  _createAnimation = (h) => {
-    return Animated.timing(
-      this.contentH, {
-        toValue: h,
-        duration: this.durationTime,
-        easing: Easing.linear,
-      },
-    );
   }
 
   _onPressBg = () => {
@@ -123,12 +110,13 @@ class BaseModal extends Component<BaseModalProps, BaseModalState> {
       closeIconStyle,
       style,
       bgStyle,
+      modalHeight,
     } = this.props;
 
     return (
       <Modal animationType={'fade'} transparent visible={this.state.visible} onRequestClose={() => { }}>
         <TouchableOpacity style={[styles.coverBg, bgStyle]} activeOpacity={1} onPress={this._onPressBg} />
-        <Animated.View style={[styles.content, style, { height: this.contentH }]}>
+        <Animatable.View duration={this.durationTime} ref={r => this.contentView = r} style={[styles.content, style, { height: modalHeight }]}>
           {
             title ?
               <View style={[styles.titleBar, { borderBottomColor: titleBarBorderColor }, titleBarStyle]}>
@@ -149,7 +137,7 @@ class BaseModal extends Component<BaseModalProps, BaseModalState> {
               null
           }
           {this.props.children}
-        </Animated.View>
+        </Animatable.View>
       </Modal>
     );
   }
