@@ -5,14 +5,12 @@ import {
   StyleSheet,
   ViewStyle,
   TextStyle,
-  TouchableOpacity,
   DeviceEventEmitter,
   EmitterSubscription,
   StyleProp,
-  Animated,
-  Easing,
 } from 'react-native';
-import appStyles, { Theme } from '../styles';
+import { Theme } from '../styles';
+import * as Animatable from 'react-native-animatable';
 
 export interface ToastConfig {
   /* 提示文案 */
@@ -23,8 +21,6 @@ export interface ToastConfig {
   callback?: () => void;
   /** 自定义这一次toast样式 */
   showStyle?: StyleProp<ViewStyle>;
-  /** 自定义这一次背景样式 */
-  showBackgroundStyle?: StyleProp<ViewStyle>;
   /** 自定义这一次展示的文字样式 */
   showTextStyle?: StyleProp<TextStyle>;
 }
@@ -34,29 +30,35 @@ export interface ToastProps {
   showTime?: number;
   /** 文字最多行数, 默认4行 */
   numberOfLines?: number;
-  /** 点击背景调用函数 */
-  onPressBackground?: (e?: any) => void;
   /** toast样式 */
   style?: StyleProp<ViewStyle>;
-  /** 背景样式 */
-  backgroundStyle?: StyleProp<ViewStyle>;
   /** 展示的文字样式 */
   textStyle?: StyleProp<TextStyle>;
-  /** 渐变显示小时时长, 默认250 */
+  /** 渐变动画时长, 默认250 */
   fadeAnimTime?: number;
 }
 
 interface ToastState {
   visible: boolean;
   text: string;
-  fadeAnim: any;
 }
+
+const customFadeInDown = {
+  from: {
+    opacity: 0,
+    ['translateY']: px2dp(-100),
+  },
+  to: {
+    opacity: 1,
+    ['translateY']: 0,
+  },
+};
 
 class Toast extends Component<ToastProps, ToastState> {
   emitter: EmitterSubscription;
-  timer: number;
+  timer: NodeJS.Timer;
   showConfig: ToastConfig;
-  scaleAnim: any = new Animated.Value(1);
+  view: Animatable.View;
 
   static defaultProps = {
     showTime: 2000,
@@ -80,7 +82,6 @@ class Toast extends Component<ToastProps, ToastState> {
     this.state = {
       visible: false,
       text: '',
-      fadeAnim: new Animated.Value(0),
     };
   }
 
@@ -100,84 +101,47 @@ class Toast extends Component<ToastProps, ToastState> {
   }
 
   show = (time = this.props.showTime, callback = () => { }) => {
-    this._showAnimat();
-    if (this.timer) clearTimeout(this.timer);
-    this.timer = setTimeout(() => {
-      this._hideAnimat();
-      setTimeout(() => {
-        this.setState({ visible: false, text: '' }, callback);
-        this.showConfig = null;
-      }, this.props.fadeAnimTime + 50);
-    }, time);
-  }
-
-  _showAnimat = () => {
-    this.scaleAnim.setValue(0.8);
-    Animated.parallel([
-      Animated.timing(
-        this.state.fadeAnim, {
-          toValue: 1,
-          easing: Easing.linear,
-          duration: this.props.fadeAnimTime,
-        },
-      ),
-      Animated.spring(
-        this.scaleAnim, {
-          toValue: 1,
-          friction: 3,
-          tension: 30,
-        },
-      ),
-    ]).start();
-  }
-
-  _hideAnimat = () => {
-    Animated.timing(
-      this.state.fadeAnim, {
-        toValue: 0,
-        easing: Easing.linear,
-        duration: this.props.fadeAnimTime,
-      },
-    ).start();
+    this.view.animate(customFadeInDown).then(() => {
+      if (this.timer) clearTimeout(this.timer);
+      this.timer = setTimeout(() => {
+        this.view.fadeOut().then(() => {
+          this.setState({ visible: false, text: '' }, callback);
+          this.showConfig = null;
+        });
+      }, time);
+    });
   }
 
   render() {
     if (!this.state.visible) return <View />;
     const {
-      style,
-      backgroundStyle,
-      onPressBackground,
+      style = {},
       textStyle,
       numberOfLines,
+      fadeAnimTime,
     } = this.props;
 
     const {
       showStyle = {},
-      showBackgroundStyle = {},
       showTextStyle = {},
     } = this.showConfig || {};
 
+    const { width = px2dp(600) } = style;
     return (
-      <TouchableOpacity style={[styles.bg, backgroundStyle, showBackgroundStyle]} activeOpacity={1} onPress={onPressBackground}>
-        <Animated.View style={[styles.toast, { opacity: this.state.fadeAnim, transform: [{ scale: this.scaleAnim }] }, style, showStyle] as StyleProp<ViewStyle>}>
-          <Text style={[styles.text, textStyle, showTextStyle]} numberOfLines={numberOfLines}>{this.state.text}</Text>
-        </Animated.View>
-      </TouchableOpacity>
+      <Animatable.View
+        ref={r => this.view = r}
+        duration={fadeAnimTime}
+        style={[styles.toast, style, showStyle, { width: width, left: (Theme.DeviceWidth - width) * 0.5 }]}
+      >
+        <Text style={[styles.text, textStyle, showTextStyle]} numberOfLines={numberOfLines}>{this.state.text}</Text>
+      </Animatable.View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  bg: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    right: 0,
-    bottom: 0,
-    alignItems: 'center',
-  } as ViewStyle,
   toast: {
-    width: px2dp(600),
+    position: 'absolute',
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
@@ -186,7 +150,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: px2dp(60),
     paddingVertical: px2dp(26),
     minHeight: px2dp(80),
-    marginTop: Theme.DeviceHeight * 0.25,
+    top: Theme.DeviceHeight * 0.3,
   } as ViewStyle,
   text: {
     fontSize: px2dp(28),

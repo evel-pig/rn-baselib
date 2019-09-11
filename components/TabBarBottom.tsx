@@ -10,7 +10,6 @@ import {
   StyleProp,
   DeviceEventEmitter,
   EmitterSubscription,
-  Animated,
 } from 'react-native';
 import { TabBarBottomProps } from 'react-navigation';
 import { Theme } from '../styles';

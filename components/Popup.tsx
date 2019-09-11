@@ -9,10 +9,9 @@ import {
   ViewStyle,
   DeviceEventEmitter,
   EmitterSubscription,
-  Animated,
-  Easing,
 } from 'react-native';
 import appStyles, { Theme } from '../styles';
+import * as Animatable from 'react-native-animatable';
 
 export interface PopupBtnProps {
   /** 按钮点击回调 */
@@ -64,13 +63,12 @@ export interface PopupProps {
 
 interface PopupState extends PopupProps {
   visible: boolean;
-  fadeAnim?: any;
   [key: string]: any;
 }
 
 class Popup extends Component<PopupProps, PopupState> {
   showEmitter: EmitterSubscription;
-  scaleAnim: any = new Animated.Value(1);
+  bgView: Animatable.View;
 
   static defaultProps = {
     keepShow: false,
@@ -101,7 +99,6 @@ class Popup extends Component<PopupProps, PopupState> {
       defaultCancelBtnStyle: null,
       defaultOkBtnTextStyle: null,
       defaultCancelBtnTextStyle: null,
-      fadeAnim: new Animated.Value(0),
       ...props,
     };
   }
@@ -109,7 +106,7 @@ class Popup extends Component<PopupProps, PopupState> {
   componentDidMount() {
     this.showEmitter = DeviceEventEmitter.addListener('POPUP_SHOW', (data: PopupProps = {}) => {
       this.setState({ ...data, visible: true }, () => {
-        this._showAnimat();
+        this.bgView.fadeIn();
       });
     });
   }
@@ -118,38 +115,8 @@ class Popup extends Component<PopupProps, PopupState> {
     if (this.showEmitter) this.showEmitter.remove();
   }
 
-  _showAnimat = () => {
-    this.scaleAnim.setValue(0.9);
-    Animated.parallel([
-      Animated.timing(
-        this.state.fadeAnim, {
-          toValue: 1,
-          easing: Easing.linear,
-          duration: this.props.fadeAnimTime,
-        },
-      ),
-      Animated.spring(
-        this.scaleAnim, {
-          toValue: 1,
-          friction: 4,
-          tension: 30,
-        },
-      ),
-    ]).start();
-  }
-
-  _hideAnimat = () => {
-    Animated.timing(
-      this.state.fadeAnim, {
-        toValue: 0,
-        easing: Easing.linear,
-        duration: this.props.fadeAnimTime,
-      },
-    ).start();
-  }
-
   _close = () => {
-    this._hideAnimat();
+    this.bgView.fadeOut();
     setTimeout(() => {
       this.setState({
         visible: false,
@@ -259,16 +226,17 @@ class Popup extends Component<PopupProps, PopupState> {
       style,
       contentViewStyle,
     } = this.state;
+    const { fadeAnimTime } = this.props;
     return (
-      <Animated.View style={[styles.container, { opacity: this.state.fadeAnim }, bgStyle]}>
-        <Animated.View style={[styles.alert, { transform: [{ scale: this.scaleAnim }] }, style]}>
+      <Animatable.View duration={fadeAnimTime} ref={r => this.bgView = r} easing={'ease-in-out'} style={[styles.container, bgStyle]}>
+        <Animatable.View animation={'bounceIn'} duration={fadeAnimTime} delay={fadeAnimTime * 0.2} style={[styles.alert, style]}>
           <View style={[appStyles.borderBottom, appStyles.center, styles.topView, contentViewStyle]}>
             {this._renderTitle()}
             {this._renderContent()}
           </View>
           {this._renderButtons()}
-        </Animated.View>
-      </Animated.View>
+        </Animatable.View>
+      </Animatable.View>
     );
   }
 }
