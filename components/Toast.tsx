@@ -132,6 +132,7 @@ class Toast extends Component<ToastProps, ToastState> {
         ref={r => this.view = r}
         duration={fadeAnimTime}
         style={[styles.toast, style, showStyle, { width: width, left: (Theme.DeviceWidth - width) * 0.5 }]}
+        useNativeDriver
       >
         <Text style={[styles.text, textStyle, showTextStyle]} numberOfLines={numberOfLines}>{this.state.text}</Text>
       </Animatable.View>

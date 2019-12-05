@@ -116,7 +116,7 @@ class BaseModal extends Component<BaseModalProps, BaseModalState> {
     return (
       <Modal animationType={'fade'} transparent visible={this.state.visible} onRequestClose={() => { }}>
         <TouchableOpacity style={[styles.coverBg, bgStyle]} activeOpacity={1} onPress={this._onPressBg} />
-        <Animatable.View duration={this.durationTime} ref={r => this.contentView = r} style={[styles.content, style, { height: modalHeight }]}>
+        <Animatable.View duration={this.durationTime} ref={r => this.contentView = r} style={[styles.content, style, { height: modalHeight }]} useNativeDriver>
           {
             title ?
               <View style={[styles.titleBar, { borderBottomColor: titleBarBorderColor }, titleBarStyle]}>

@@ -228,8 +228,8 @@ class Popup extends Component<PopupProps, PopupState> {
     } = this.state;
     const { fadeAnimTime } = this.props;
     return (
-      <Animatable.View duration={fadeAnimTime} ref={r => this.bgView = r} easing={'ease-in-out'} style={[styles.container, bgStyle]}>
-        <Animatable.View animation={'bounceIn'} duration={fadeAnimTime} delay={fadeAnimTime * 0.2} style={[styles.alert, style]}>
+      <Animatable.View duration={fadeAnimTime} ref={r => this.bgView = r} easing={'ease-in-out'} style={[styles.container, bgStyle]} useNativeDriver>
+        <Animatable.View animation={'bounceIn'} duration={fadeAnimTime} delay={fadeAnimTime * 0.2} style={[styles.alert, style]} useNativeDriver>
           <View style={[appStyles.borderBottom, appStyles.center, styles.topView, contentViewStyle]}>
             {this._renderTitle()}
             {this._renderContent()}

@@ -149,7 +149,7 @@ class TabBarBottom extends Component<TabBarProps, TabBarBottomOwnState> {
 
     const currentIndex = navigation.state.index || 0;
     return (
-      <Animatable.View ref={r => this.view = r} duration={300} easing={'ease-in-out'} style={[styles.tab, style, { borderTopColor: topLineColor }]}>
+      <Animatable.View ref={r => this.view = r} duration={300} easing={'ease-in-out'} style={[styles.tab, style, { borderTopColor: topLineColor }]} useNativeDriver>
         {backgroundComponent}
         {tabs.map((item, index) => {
           let isSelected = currentIndex === index;
